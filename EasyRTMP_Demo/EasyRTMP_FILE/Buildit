@@ -1,0 +1,25 @@
+#!/bin/sh
+ 
+usage()
+{
+	echo "0. clean up ./Buildit clean"
+	echo "1. build debug program ./Buildit debug"			
+}
+ 
+if [ "$*" = "clean" ] ; then
+	make -f nbproject/Makefile-Debug.mk QMAKE= SUBPROJECTS= .clean-conf
+    make -f nbproject/Makefile-Release.mk QMAKE= SUBPROJECTS= .clean-conf
+    make -f nbproject/Makefile-hisiv100_static.mk QMAKE= SUBPROJECTS= .clean-conf
+	make -f Makefile-exe clean
+	make -f Makefile-armexe clean
+elif [ "$*" = "hisiv100" ] ; then
+    make -f nbproject/Makefile-hisiv100_static.mk QMAKE= SUBPROJECTS= .build-conf
+elif [ "$*" = "android" ] ; then
+    make -f nbproject/Makefile-Android.mk QMAKE= SUBPROJECTS= .build-conf
+elif [ "$*" = "debug" ] ; then
+    make -f nbproject/Makefile-Debug.mk QMAKE= SUBPROJECTS= .build-conf
+elif [ "$*" = "armdebug" ] ; then
+    make -f Makefile-armexe
+else 
+	usage;
+fi

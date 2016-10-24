@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EasyRTMP_SDK", "EasyRTMP_SDK\EasyRTMP_SDK.vcxproj", "{5B2EE120-098A-42CC-9418-9D61A4D0133E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EasyRTMP_FILE", "EasyRTMP_FILE\EasyRTMP_FILE.vcxproj", "{0D20F1D1-409E-4799-A838-AC74CFE27456}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EasyRTMP_RTSP", "EasyRTMP_RTSP\EasyRTMP_RTSP.vcxproj", "{46A7FA69-397C-4336-B08F-9E9FA2931867}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
+		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5B2EE120-098A-42CC-9418-9D61A4D0133E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5B2EE120-098A-42CC-9418-9D61A4D0133E}.Debug|Win32.Build.0 = Debug|Win32
+		{5B2EE120-098A-42CC-9418-9D61A4D0133E}.Debug|x64.ActiveCfg = Debug|Win32
+		{5B2EE120-098A-42CC-9418-9D61A4D0133E}.Release|Win32.ActiveCfg = Release|Win32
+		{5B2EE120-098A-42CC-9418-9D61A4D0133E}.Release|Win32.Build.0 = Release|Win32
+		{5B2EE120-098A-42CC-9418-9D61A4D0133E}.Release|x64.ActiveCfg = Release|Win32
+		{0D20F1D1-409E-4799-A838-AC74CFE27456}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0D20F1D1-409E-4799-A838-AC74CFE27456}.Debug|Win32.Build.0 = Debug|Win32
+		{0D20F1D1-409E-4799-A838-AC74CFE27456}.Debug|x64.ActiveCfg = Debug|Win32
+		{0D20F1D1-409E-4799-A838-AC74CFE27456}.Release|Win32.ActiveCfg = Release|Win32
+		{0D20F1D1-409E-4799-A838-AC74CFE27456}.Release|Win32.Build.0 = Release|Win32
+		{0D20F1D1-409E-4799-A838-AC74CFE27456}.Release|x64.ActiveCfg = Release|Win32
+		{46A7FA69-397C-4336-B08F-9E9FA2931867}.Debug|Win32.ActiveCfg = Debug|Win32
+		{46A7FA69-397C-4336-B08F-9E9FA2931867}.Debug|Win32.Build.0 = Debug|Win32
+		{46A7FA69-397C-4336-B08F-9E9FA2931867}.Debug|x64.ActiveCfg = Debug|x64
+		{46A7FA69-397C-4336-B08F-9E9FA2931867}.Debug|x64.Build.0 = Debug|x64
+		{46A7FA69-397C-4336-B08F-9E9FA2931867}.Release|Win32.ActiveCfg = Release|Win32
+		{46A7FA69-397C-4336-B08F-9E9FA2931867}.Release|Win32.Build.0 = Release|Win32
+		{46A7FA69-397C-4336-B08F-9E9FA2931867}.Release|x64.ActiveCfg = Release|x64
+		{46A7FA69-397C-4336-B08F-9E9FA2931867}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
