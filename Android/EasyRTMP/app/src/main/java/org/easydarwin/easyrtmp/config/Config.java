@@ -14,7 +14,7 @@ package org.easydarwin.easyrtmp.config;
  */
 public class Config {
     public static final String SERVER_URL = "serverUrl";
-    public static final String DEFAULT_SERVER_URL = "rtmp://124.193.154.4/live/stream"+String.valueOf((int) (Math.random() * 1000000 + 100000));
+    public static final String DEFAULT_SERVER_URL = "rtmp://121.40.50.44/live/stream_"+String.valueOf((int) (Math.random() * 1000000 + 100000));
     public static final String PREF_NAME = "easy_pref";
     public static final String K_RESOLUTION = "k_resolution";
 }

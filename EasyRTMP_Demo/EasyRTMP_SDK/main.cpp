@@ -244,12 +244,18 @@ int main(int argc, char * argv[])
 	mediainfo.u32AudioSamplerate = 8000;
 
     g_RtmpHandle = EasyRTMP_Create();
+
+	if (g_RtmpHandle == NULL)
+		return -2;
+
+	EasyRTMP_SetCallback(g_RtmpHandle, __EasyRTMP_Callback, NULL);
+
 	bRet = EasyRTMP_Connect(g_RtmpHandle, SRTMP);
 	if (!bRet)
 	{
 		printf("Fail to EasyRTMP_Connect ...\n");
 	}
-    EasyRTMP_SetCallback(g_RtmpHandle, __EasyRTMP_Callback, NULL);
+    
 	iRet = EasyRTMP_InitMetadata(g_RtmpHandle, &mediainfo, 1024);
 	if (iRet < 0)
 	{

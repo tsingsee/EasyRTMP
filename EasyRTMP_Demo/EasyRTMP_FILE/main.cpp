@@ -318,6 +318,8 @@ int main(int argc, char * argv[])
 	if(g_RtmpHandle == NULL)
 		return -2;
 
+	EasyRTMP_SetCallback(g_RtmpHandle, __EasyRTMP_Callback, NULL);
+
 	EasyRTMP_Connect(g_RtmpHandle, SRTMP);
 	memset(&g_clock, 0, sizeof(g_clock));
 

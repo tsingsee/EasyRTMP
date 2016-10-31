@@ -37,6 +37,18 @@ typedef struct _rtmp_pusher_struct_t
 _rtmp_pusher g_rtmpPusher = {0};
 Easy_RTSP_Handle fNVSHandle = 0;
 
+/* EasyRTMP callback */
+int __EasyRTMP_Callback(int _frameType, char *pBuf, EASY_RTMP_STATE_T _state, void *_userPtr)
+{
+	if (_state == EASY_RTMP_STATE_CONNECTING)               printf("Connecting...\n");
+	else if (_state == EASY_RTMP_STATE_CONNECTED)           printf("Connected\n");
+	else if (_state == EASY_RTMP_STATE_CONNECT_FAILED)      printf("Connect failed\n");
+	else if (_state == EASY_RTMP_STATE_CONNECT_ABORT)       printf("Connect abort\n");
+	else if (_state == EASY_RTMP_STATE_DISCONNECTED)        printf("Disconnect.\n");
+
+	return 0;
+}
+
 int EasyInitAACEncoder(RTSP_FRAME_INFO *frameinfo)
 {
 	if(g_rtmpPusher.m_pAACEncoderHandle == NULL)
@@ -83,7 +95,9 @@ int Easy_APICALL __RTSPSourceCallBack( int _chid, void *_chPtr, int _mediatype, 
 				if(g_rtmpPusher.rtmpHandle == 0)
 				{
 					g_rtmpPusher.rtmpHandle = EasyRTMP_Create();
-
+					if (g_rtmpPusher.rtmpHandle == NULL)
+						return -1;
+					EasyRTMP_SetCallback(g_rtmpPusher.rtmpHandle, __EasyRTMP_Callback, NULL);
 					bRet = EasyRTMP_Connect(g_rtmpPusher.rtmpHandle, SRTMP);
 					if (!bRet)
 					{
