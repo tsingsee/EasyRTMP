@@ -14,7 +14,7 @@ EasyRTMP是EasyDarwin团队开发的一套RTMP直播推送功能组件，内部�
 
 
 ### 调用过程 ###
-![EasyRTMP](http://www.easydarwin.org/skin/easydarwin/images/easyrtmp20150908.png)
+![EasyRTMP](http://www.easydarwin.org/skin/easydarwin/images/easyrtmp20161101.png)
 
 
 ### 获取更多信息 ###
