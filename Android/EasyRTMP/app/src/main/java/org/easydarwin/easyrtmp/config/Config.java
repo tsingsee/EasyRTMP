@@ -9,8 +9,6 @@ package org.easydarwin.easyrtmp.config;
 
 /**
  * 类Config的实现描述：//TODO 类实现描述
- *
- * @author HELONG 2016/3/7 19:02
  */
 public class Config {
     public static final String SERVER_URL = "serverUrl";
