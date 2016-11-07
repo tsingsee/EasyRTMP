@@ -15,12 +15,12 @@
 #include "EasyRTMPAPI.h"
 #pragma comment(lib,"libeasyrtmp.lib")
 
-#define RTSPURL "rtsp://admin:admin@192.168.31.100/11"
+#define RTSPURL "rtsp://admin:admin@192.168.66.222/11"
 //#define RTSPURL "rtsp://192.168.1.93:8554/524155"
 
 //#define SRTMP "rtmp://124.193.154.4/live/stream"
 //#define SRTMP "rtmp://w.gslb.lecloud.com/live/201610053000001k699?sign=35b318b30eb40642ba86374780e3e0e7&tm=20161005174352"
-#define SRTMP "rtmp://127.0.0.1/live/kimpc"
+#define SRTMP "rtmp://192.168.66.233/live/kimpc"
 
 #define BUFFER_SIZE  1024*1024
 
