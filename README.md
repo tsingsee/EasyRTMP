@@ -4,6 +4,13 @@
 
 EasyRTMP是EasyDarwin团队开发的一套RTMP直播推送功能组件，内部集成了包括：基本RTMP协议、断线重连、异步推送、环形缓冲区、推送网络拥塞自动丢帧、缓冲区关键帧检索、事件回调(断线、音视频数据回调)，通过EasyRTMP我们就可以避免接触到稍显复杂的RTMP推送或者客户端流程，只需要调用EasyRTMP的几个API接口，就能轻松、稳定地进行流媒体音视频数据的推送，支持市面上绝大部分的RTMP流媒体服务器，包括Red5、Ngnix_rtmp、crtmpserver等主流RTMP服务器，全平台支持：Windows、Linux、ARM(各种交叉编译工具链)、Android、iOS;
 
+## 版本下载 ##
+
+- Windows：[https://github.com/EasyDarwin/EasyRTMP/releases](https://github.com/EasyDarwin/EasyRTMP/releases "EasyRTMP Windows")
+
+- Android：[http://fir.im/easyrtmp](http://fir.im/easyrtmp "EasyRTMP Android")
+
+![EasyClient Android](http://www.easydarwin.org/github/images/firimeasyrtmpandroid.png)
 
 ### 调用方法 ###
 

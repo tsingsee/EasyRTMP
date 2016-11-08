@@ -35,3 +35,5 @@ _ReSharper*/
 ipch/
 *.opensdf
 *.264
+*.VC.opendb
+*.VC.db
