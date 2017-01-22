@@ -44,6 +44,12 @@ package="org.easydarwin.easyrtmp">
     <service
         android:name="org.easydarwin.easyrtmp.activity.BackgroundCameraService"
         android:enabled="true"></service>
+    <receiver android:name="org.easydarwin.easyrtmp.updatemgr.CompleteReceiver" >
+        <intent-filter>
+            <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
+            <action android:name="android.intent.action.DOWNLOAD_NOTIFICATION_CLICKED" />
+        </intent-filter>
+    </receiver>
 </application>
 
 </manifest>
