@@ -53,7 +53,7 @@ public class EasyRTMP {
      * @param data      H264数据
      * @param timestamp 时间戳，毫秒
      */
-    private native void push(long pusherObj, byte[] data, long timestamp, int type);
+    private native void push(long pusherObj, byte[] data, int offset, int length, long timestamp, int type);
 
     /**
      * 停止推送
@@ -67,12 +67,16 @@ public class EasyRTMP {
     }
 
     public void initPush(final String url, final Context context, final OnInitPusherCallback callback) {
-        String key = "79397037795A36526D3432412F517459702F51434A656876636D63755A57467A65575268636E64706269356C59584E35636E52746346634D5671442F7065424859585A7062695A4359574A76633246414D6A41784E6B566863336C4559584A33615735555A5746745A57467A65513D3D";
+        String key = "79397037795A36526D343041396F4E597033774A70656876636D63755A57467A65575268636E64706269356C59584E35636E52746346634D5671442F7065424859585A7062695A4359574A76633246414D6A41784E6B566863336C4559584A33615735555A5746745A57467A65513D3D";
         mPusherObj = init(url, key, context, callback);
     }
 
     public void push(byte[] data, long timestamp, int type){
-        push(mPusherObj, data, timestamp,type);
+        push(data, 0, data.length, timestamp,type);
+    }
+
+    public void push(byte[] data, int offset, int length, long timestamp, int type){
+        push(mPusherObj, data, offset, length, timestamp,type);
     }
 }
 
