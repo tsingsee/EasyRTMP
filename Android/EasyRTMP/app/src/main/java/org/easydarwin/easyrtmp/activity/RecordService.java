@@ -82,6 +82,9 @@ public class RecordService extends Service {
         mediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, 25);
         mediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
         mediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
+        mediaFormat.setInteger(MediaFormat.KEY_CHANNEL_COUNT, 1);
+        mediaFormat.setInteger(MediaFormat.KEY_CAPTURE_RATE, 25);
+        mediaFormat.setInteger(MediaFormat.KEY_REPEAT_PREVIOUS_FRAME_AFTER, 1000000 / 25);
         try {
             mMediaCodec = MediaCodec.createEncoderByType("video/avc");
         } catch (IOException e) {
