@@ -18,6 +18,7 @@ import android.media.MediaFormat;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -52,6 +53,8 @@ public class RecordService extends Service {
     private WindowManager wm;
 
     private MediaCodec.BufferInfo mBufferInfo = new MediaCodec.BufferInfo();
+    private byte[] mH264Buffer;
+    private long timeStamp = System.currentTimeMillis();
 
     static EasyRTMP mEasyRTMP;
     private Thread mPushThread;
@@ -82,6 +85,9 @@ public class RecordService extends Service {
         mediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, 25);
         mediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
         mediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
+        mediaFormat.setInteger(MediaFormat.KEY_CHANNEL_COUNT, 1);
+        mediaFormat.setInteger(MediaFormat.KEY_CAPTURE_RATE, 25);
+        mediaFormat.setInteger(MediaFormat.KEY_REPEAT_PREVIOUS_FRAME_AFTER, 1000000 / 25);
         try {
             mMediaCodec = MediaCodec.createEncoderByType("video/avc");
         } catch (IOException e) {
@@ -134,6 +140,8 @@ public class RecordService extends Service {
 
                 mEasyRTMP.initPush(url, getApplicationContext(), null);
                 mAudioStream.startRecord();
+                mH264Buffer = new byte[(int) (windowWidth*windowHeight*1.5)];
+                timeStamp = System.currentTimeMillis();
                 while (mPushThread != null) {
                     int index = mMediaCodec.dequeueOutputBuffer(mBufferInfo, 10000);
                     Log.i(TAG, "dequeue output buffer index=" + index);
@@ -146,28 +154,36 @@ public class RecordService extends Service {
                         }
                     } else if (index >= 0) {//有效输出
                         ByteBuffer outputBuffer = mMediaCodec.getOutputBuffer(index);
-
-                        byte[] outData = new byte[mBufferInfo.size];
-                        outputBuffer.get(outData);
+                        int type = outputBuffer.get(4) & 0x1F;
 
 //                        String data0 = String.format("%x %x %x %x %x %x %x %x %x %x ", outData[0], outData[1], outData[2], outData[3], outData[4], outData[5], outData[6], outData[7], outData[8], outData[9]);
 //                        Log.e("out_data", data0);
 
                         //记录pps和sps
-                        int type = outData[4] & 0x07;
                         if (type == 7 || type == 8) {
+                            byte[] outData = new byte[mBufferInfo.size];
+                            outputBuffer.get(outData);
                             mPpsSps = outData;
                         } else if (type == 5) {
                             //在关键帧前面加上pps和sps数据
                             if (mPpsSps != null) {
-                                byte[] iframeData = new byte[mPpsSps.length + outData.length];
-                                System.arraycopy(mPpsSps, 0, iframeData, 0, mPpsSps.length);
-                                System.arraycopy(outData, 0, iframeData, mPpsSps.length, outData.length);
-                                outData = iframeData;
+                                System.arraycopy(mPpsSps, 0, mH264Buffer, 0, mPpsSps.length);
+                                outputBuffer.get(mH264Buffer, mPpsSps.length, mBufferInfo.size);
+                                mEasyRTMP.push(mH264Buffer, 0,mPpsSps.length+mBufferInfo.size,System.currentTimeMillis(), 1);
                             }
+                        } else {
+                            outputBuffer.get(mH264Buffer, 0, mBufferInfo.size);
+                            if (System.currentTimeMillis() - timeStamp >= 3000) {
+                                timeStamp = System.currentTimeMillis();
+                                if (Build.VERSION.SDK_INT >= 23) {
+                                    Bundle params = new Bundle();
+                                    params.putInt(MediaCodec.PARAMETER_KEY_REQUEST_SYNC_FRAME, 0);
+                                    mMediaCodec.setParameters(params);
+                                }
+                            }
+                            mEasyRTMP.push(mH264Buffer, 0, mBufferInfo.size, System.currentTimeMillis(), 1);
                         }
 
-                        mEasyRTMP.push(outData, mBufferInfo.presentationTimeUs/1000, 1);
                         mMediaCodec.releaseOutputBuffer(index, false);
                     }
                 }
