@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2012-2016 EasyDarwin.ORG.  All rights reserved.
+	Copyright (c) 2012-2017 EasyDarwin.ORG.  All rights reserved.
 	Github: https://github.com/EasyDarwin
 	WEChat: EasyDarwin
 	Website: http://www.easydarwin.org
@@ -157,9 +157,11 @@ public class StreameActivity extends AppCompatActivity implements SurfaceHolder.
             btnPushScreen.setText("推送屏幕");
             btnSwitch.setEnabled(true);
             btnSwitchCemera.setEnabled(true);
+            btnSetting.setEnabled(true);
         }else{
             btnSwitch.setEnabled(false);
             btnSwitchCemera.setEnabled(false);
+            btnSetting.setEnabled(false);
             startScreenPushIntent();
         }
     }
@@ -309,6 +311,8 @@ public class StreameActivity extends AppCompatActivity implements SurfaceHolder.
                     mMediaStream.stopStream();
                     btnSwitch.setText("推送摄像头");
                     spnResolution.setEnabled(true);
+                    btnSwitchCemera.setEnabled(true);
+                    btnSetting.setEnabled(true);
                 }
                 sendMessage("");
                 onPushScreen();
@@ -325,6 +329,8 @@ public class StreameActivity extends AppCompatActivity implements SurfaceHolder.
 
                 if (!mMediaStream.isStreaming()) {
                     btnPushScreen.setEnabled(false);
+                    btnSetting.setEnabled(false);
+                    btnSwitchCemera.setEnabled(false);
                     String url = EasyApplication.getEasyApplication().getUrl();
 
                     mMediaStream.startStream(url, new EasyRTMP.OnInitPusherCallback() {
@@ -376,6 +382,8 @@ public class StreameActivity extends AppCompatActivity implements SurfaceHolder.
                     btnSwitch.setText("推送摄像头");
                     spnResolution.setEnabled(true);
                     btnPushScreen.setEnabled(true);
+                    btnSetting.setEnabled(true);
+                    btnSwitchCemera.setEnabled(true);
                 }
                 break;
             case R.id.btn_setting:
