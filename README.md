@@ -19,7 +19,7 @@ EasyRTMP是EasyDarwin团队开发的一套RTMP直播推送功能组件，内部�
 
 [https://fir.im/easyrtmp](https://fir.im/easyrtmp "https://fir.im/easyrtmp")
 
-![EasyRTMP Android](http://www.easydarwin.org/github/images/easyrtmpfirim20170205.png)
+![EasyRTMP Android](http://www.easydarwin.org/github/images/easyrtmpfirim20170409.png)
 
 - EasyRTMP iOS：支持前/后摄像头直播
 
