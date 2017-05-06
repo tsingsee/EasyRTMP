@@ -8,7 +8,10 @@ package org.easydarwin.easyrtmp.push;
 
 import android.content.Context;
 
-public class EasyRTMP {
+import org.easydarwin.push.InitCallback;
+import org.easydarwin.push.Pusher;
+
+public class EasyRTMP implements Pusher {
     private static String TAG = "EasyRTMP";
     static {
         System.loadLibrary("easyrtmp");
@@ -60,22 +63,34 @@ public class EasyRTMP {
      */
     private native void stopPush(long pusherObj);
 
-    public void stop() {
+    public synchronized void stop() {
         if (mPusherObj == 0) return;
         stopPush(mPusherObj);
         mPusherObj = 0;
     }
 
-    public void initPush(final String url, final Context context, final OnInitPusherCallback callback) {
+    @Override
+    public void initPush(String serverIP, String serverPort, String streamName, Context context, InitCallback callback) {
+        throw new RuntimeException("not support");
+    }
+
+    @Override
+    public synchronized void initPush(final String url, final Context context, final InitCallback callback) {
         String key = "79397037795A36526D3430416E667059707756686B756876636D63755A57467A65575268636E64706269356C59584E35636E52746346634D5671442B6B75424859585A7062695A4359574A76633246414D6A41784E6B566863336C4559584A33615735555A5746745A57467A65513D3D";
-        mPusherObj = init(url, key, context, callback);
+        mPusherObj = init(url, key, context, new OnInitPusherCallback() {
+            @Override
+            public void onCallback(int code) {
+                if (callback != null)callback.onCallback(code);
+            }
+        });
     }
 
     public void push(byte[] data, long timestamp, int type){
         push(data, 0, data.length, timestamp,type);
     }
 
-    public void push(byte[] data, int offset, int length, long timestamp, int type){
+    public synchronized void push(byte[] data, int offset, int length, long timestamp, int type){
+        if (mPusherObj == 0) return;
         push(mPusherObj, data, offset, length, timestamp,type);
     }
 }

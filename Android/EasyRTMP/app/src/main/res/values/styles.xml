@@ -10,4 +10,7 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="toolbar" parent="Base.Widget.AppCompat.Toolbar">
+        <item name="android:background">@color/colorPrimary</item>
+    </style>
 </resources>
