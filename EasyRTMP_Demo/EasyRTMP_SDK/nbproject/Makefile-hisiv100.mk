@@ -54,30 +54,30 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-L../Lib/hisiv100 -LSDK/Lib/hisiv100
+LDLIBSOPTIONS=-L../Lib/EasyAACEncloder/${CND_CONF} -LSDK/Lib/hisiv100 -L../Lib/hisiv100_static
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/easyrtmp_sdk
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_CONF}/easyrtmp_sdk
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/easyrtmp_sdk: ${OBJECTFILES}
-	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/easyrtmp_sdk ${OBJECTFILES} ${LDLIBSOPTIONS} -lNetLib -leasyrtmp -lEasyAACEncoder
+${CND_CONF}/easyrtmp_sdk: ${OBJECTFILES}
+	${MKDIR} -p ${CND_CONF}
+	${LINK.cc} -o ${CND_CONF}/easyrtmp_sdk ${OBJECTFILES} ${LDLIBSOPTIONS} -lNetLib -leasyrtmp -leasyaacencoder -pthread
 
-${OBJECTDIR}/getopt.o: getopt.c 
+${OBJECTDIR}/getopt.o: getopt.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.c) -g -DHI_OS_LINUX -I../Include -ISDK/Include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/getopt.o getopt.c
+	$(COMPILE.c) -O2 -DHI_OS_LINUX -D_ARM -D_FILE_OFFSET_BITS=64 -I../Include -ISDK/Include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/getopt.o getopt.c
 
-${OBJECTDIR}/main.o: main.cpp 
+${OBJECTDIR}/main.o: main.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DHI_OS_LINUX -I../Include -ISDK/Include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
+	$(COMPILE.cc) -O2 -DHI_OS_LINUX -D_ARM -D_FILE_OFFSET_BITS=64 -I../Include -ISDK/Include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
 
-${OBJECTDIR}/trace.o: trace.c 
+${OBJECTDIR}/trace.o: trace.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.c) -g -DHI_OS_LINUX -I../Include -ISDK/Include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/trace.o trace.c
+	$(COMPILE.c) -O2 -DHI_OS_LINUX -D_ARM -D_FILE_OFFSET_BITS=64 -I../Include -ISDK/Include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/trace.o trace.c
 
 # Subprojects
 .build-subprojects:
@@ -85,7 +85,6 @@ ${OBJECTDIR}/trace.o: trace.c
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/easyrtmp_sdk
 
 # Subprojects
 .clean-subprojects:

@@ -19,7 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="getopt.c" />
     <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="getopt.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{46A7FA69-397C-4336-B08F-9E9FA2931867}</ProjectGuid>
@@ -97,7 +101,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../Lib/</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Lib/;../Lib/EasyAACEncloder;libEasyRTSPClient/Lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -131,7 +135,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../Lib/</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Lib/;../Lib/EasyAACEncloder;libEasyRTSPClient/Lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

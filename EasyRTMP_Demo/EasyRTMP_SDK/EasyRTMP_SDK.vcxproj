@@ -49,7 +49,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../Lib/;./SDK/Lib/</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Lib/;./SDK/Lib/;../Lib/EasyAACEncloder</AdditionalLibraryDirectories>
       <AdditionalDependencies>ws2_32.lib;winmm.lib;libEasyRTMP.lib;libEasyAACEncoder.lib;NetLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

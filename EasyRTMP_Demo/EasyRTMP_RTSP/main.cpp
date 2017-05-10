@@ -6,31 +6,39 @@
 */
 #define _CRTDBG_MAP_ALLOC
 #include <stdio.h>
-
+#ifdef _WIN32
 #include "windows.h"
+#else
+#include <string.h>
+#endif
+#include "getopt.h"
+#include <stdio.h> 
+#include <iostream> 
+#include <time.h> 
+#include <stdlib.h>
+
 #include "EasyRTSPClientAPI.h"
-#pragma comment(lib,"libEasyRTSPClient.lib")
 #include "EasyAACEncoderAPI.h"
-#pragma comment(lib,"libEasyAACEncoder.lib")
 #include "EasyRTMPAPI.h"
+#ifdef _WIN32
+#pragma comment(lib,"libEasyRTSPClient.lib")
+#pragma comment(lib,"libEasyAACEncoder.lib")
 #pragma comment(lib,"libeasyrtmp.lib")
+#endif
 
-#define RTSPURL "rtsp://admin:admin@192.168.2.100/11"
-//#define RTSPURL "rtsp://192.168.1.93:8554/524155"
-
-//#define SRTMP "rtmp://124.193.154.4/live/stream"
-//#define SRTMP "rtmp://w.gslb.lecloud.com/live/201610053000001k699?sign=35b318b30eb40642ba86374780e3e0e7&tm=20161005174352"
-#define SRTMP "rtmp://121.40.50.44/live/kimpckim"
+#define MAX_RTMP_URL_LEN 256
+static char* RTSPURL = NULL;
+static char SRTMP[MAX_RTMP_URL_LEN] = { 0 };// "rtmp://121.40.50.44/live/easyrtmptest";
 
 #ifdef _WIN32
-#define KEY "79397037795969576B5A7541594C6459703069664A6668336157356B6233647A567778576F502B6C34456468646D6C754A6B4A68596D397A595541794D4445325257467A65555268636E6470626C526C5957316C59584E35"
-#define EasyRTSPClient_KEY "79393674363469576B5A7541594C6459703069664A65354659584E35556C524E5546395356464E514C6D56345A56634D5671442F7065424859585A7062695A4359574A76633246414D6A41784E6B566863336C4559584A33615735555A5746745A57467A65513D3D"
-#elif define _ARM
-#define KEY "7939703779662B2B72624B41594C6459703069664A667468636D31743456634D5671442F7065424859585A7062695A4359574A76633246414D6A41784E6B566863336C4559584A33615735555A5746745A57467A65513D3D"
-#define EasyRTSPClient_KEY "79393674362F2B2B72624B41594C6459703069664A664A6C59584E35636E52746346397964484E77567778576F502B6C34456468646D6C754A6B4A68596D397A595541794D4445325257467A65555268636E6470626C526C5957316C59584E35"
+#define KEY "79397037795969576B5A75414268465A707537354A66644659584E35556E527463436C58444661672F365867523246326157346D516D466962334E68514449774D545A4659584E355247467964326C75564756686257566863336B3D"
+#define EasyRTSPClient_KEY "79393674363469576B5A75414268465A707537354A65354659584E35556C524E5546395356464E514C6D56345A56634D5671442F7065424859585A7062695A4359574A76633246414D6A41784E6B566863336C4559584A33615735555A5746745A57467A65513D3D"
+#elif defined _ARM
+#define KEY "7939703779662B2B72624B414268465A707537354A664A6C59584E35636E52746346397964484E77567778576F502B6C34456468646D6C754A6B4A68596D397A595541794D4445325257467A65555268636E6470626C526C5957316C59584E35"
+#define EasyRTSPClient_KEY "79393674362F2B2B72624B414268465A707537354A664A6C59584E35636E52746346397964484E77567778576F502B6C34456468646D6C754A6B4A68596D397A595541794D4445325257467A65555268636E6470626C526C5957316C59584E35"
 #else //x86 linux
-#define KEY "6A36334A74354F576B597141594C6459703069664A667073615735316546634D5671442F7065424859585A7062695A4359574A76633246414D6A41784E6B566863336C4559584A33615735555A5746745A57467A65513D3D"
-#define EasyRTSPClient_KEY "79397037795A4F576B597141594C6459703069664A66687362476C7564586868567778576F502B6C34456468646D6C754A6B4A68596D397A595541794D4445325257467A65555268636E6470626C526C5957316C59584E35"
+#define KEY "79397037795A4F576B5971414268465A707537354A664A6C59584E35636E52746346397964484E77567778576F502B6C34456468646D6C754A6B4A68596D397A595541794D4445325257467A65555268636E6470626C526C5957316C59584E35"
+#define EasyRTSPClient_KEY "7939367436354F576B5971414268465A707537354A664A6C59584E35636E52746346397964484E77567778576F502B6C34456468646D6C754A6B4A68596D397A595541794D4445325257467A65555268636E6470626C526C5957316C59584E35"
 #endif
 
 #define BUFFER_SIZE  1024*1024
@@ -38,9 +46,9 @@
 typedef struct _rtmp_pusher_struct_t
 {
 	Easy_RTMP_Handle rtmpHandle;
-	unsigned int u32AudioCodec;				/* 音频编码类型 */
-	unsigned int u32AudioSamplerate;		/* 音频采样率 */
-	unsigned int u32AudioChannel;			/* 音频通道数 */
+	unsigned int u32AudioCodec;	
+	unsigned int u32AudioSamplerate;
+	unsigned int u32AudioChannel;
 	EasyAACEncoder_Handle m_pAACEncoderHandle;
 	unsigned char m_pAACEncBufer[64*1024];
 }_rtmp_pusher;
@@ -81,7 +89,7 @@ int EasyInitAACEncoder(RTSP_FRAME_INFO *frameinfo)
 	return 0;
 }
 
-/* NVSource从RTSPClient获取数据后回调给上层 */
+/* EasyRTSPClient callback */
 int Easy_APICALL __RTSPSourceCallBack( int _chid, void *_chPtr, int _mediatype, char *pbuf, RTSP_FRAME_INFO *frameinfo)
 {
 	if (NULL != frameinfo)
@@ -92,7 +100,6 @@ int Easy_APICALL __RTSPSourceCallBack( int _chid, void *_chPtr, int _mediatype, 
 	Easy_Bool bRet = 0;
 	int iRet = 0;
 
-	//目前只处理视频
 	if (_mediatype == EASY_SDK_VIDEO_FRAME_FLAG)
 	{
 		if(frameinfo && frameinfo->length)
@@ -102,7 +109,6 @@ int Easy_APICALL __RTSPSourceCallBack( int _chid, void *_chPtr, int _mediatype, 
 				/*printf("pbuf = %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
 					pbuf[0],pbuf[1],pbuf[2],pbuf[3],pbuf[4],pbuf[5],pbuf[6],pbuf[7],pbuf[8],pbuf[9],pbuf[10],pbuf[11],pbuf[12],pbuf[13],pbuf[14],pbuf[15],pbuf[16],
 					pbuf[17],pbuf[18],pbuf[19],pbuf[20],pbuf[21],pbuf[22],pbuf[23],pbuf[24],pbuf[25],pbuf[26],pbuf[27],pbuf[28],pbuf[29]);*/
-				/* 关键帧是SPS、PPS、IDR(均包含00 00 00 01)的组合,reserved1是sps结尾的偏移,reserved2是pps结尾的偏移 */
 				if(g_rtmpPusher.rtmpHandle == 0)
 				{
 					g_rtmpPusher.rtmpHandle = EasyRTMP_Create();
@@ -124,6 +130,8 @@ int Easy_APICALL __RTSPSourceCallBack( int _chid, void *_chPtr, int _mediatype, 
 					{
 						printf("Fail to InitMetadata ...\n");
 					}
+
+					printf("Please Play the URL: %s", SRTMP);
 				}
 
 				EASY_AV_Frame avFrame;
@@ -142,7 +150,7 @@ int Easy_APICALL __RTSPSourceCallBack( int _chid, void *_chPtr, int _mediatype, 
 				}
 				else
 				{
-					printf("I");
+					//printf("I");
 				}
 			}
 			else
@@ -164,7 +172,7 @@ int Easy_APICALL __RTSPSourceCallBack( int _chid, void *_chPtr, int _mediatype, 
 					}
 					else
 					{
-						printf("P");
+						//printf("P");
 					}
 				}
 			}				
@@ -182,7 +190,7 @@ int Easy_APICALL __RTSPSourceCallBack( int _chid, void *_chPtr, int _mediatype, 
 		{
 			avFrame.pBuffer = (Easy_U8*)(pbuf);
 			avFrame.u32AVFrameLen  = frameinfo->length;	
-			printf("*");
+			//printf("*");
 			iRet = EasyRTMP_SendPacket(g_rtmpPusher.rtmpHandle, &avFrame);
 		}
 		else if ((frameinfo->codec == EASY_SDK_AUDIO_CODEC_G711A) || (frameinfo->codec == EASY_SDK_AUDIO_CODEC_G711U) || (frameinfo->codec == EASY_SDK_AUDIO_CODEC_G726))
@@ -194,7 +202,7 @@ int Easy_APICALL __RTSPSourceCallBack( int _chid, void *_chPtr, int _mediatype, 
 
 				if(Easy_AACEncoder_Encode(g_rtmpPusher.m_pAACEncoderHandle, (unsigned char*)pbuf,  frameinfo->length, g_rtmpPusher.m_pAACEncBufer, &iAACBufferLen) > 0)
 				{
-					printf("*");
+					//printf("*");
 					avFrame.pBuffer = (Easy_U8*)(g_rtmpPusher.m_pAACEncBufer);
 					avFrame.u32AVFrameLen  = iAACBufferLen;	
 					iRet = EasyRTMP_SendPacket(g_rtmpPusher.rtmpHandle, &avFrame);
@@ -206,36 +214,90 @@ int Easy_APICALL __RTSPSourceCallBack( int _chid, void *_chPtr, int _mediatype, 
 	return 0;
 }
 
-int main()
+void PrintUsage(char* ProgName)
 {
+	printf("Usage:\n");
+	printf("------------------------------------------------------\n");
+	printf("%s -s <rtsp source stream> -m <dest rtmp streamName>\n", ProgName);
+	printf("Help Mode:   %s -h \n", ProgName);
+	printf("For example: %s -s rtsp://admin:admin@192.168.2.100/22 -m rtmp://www.easydss.com/live/easyrtmptest\n", ProgName);
+	printf("------------------------------------------------------\n");
+}
+
+int main(int argc, char * argv[])
+{
+#ifdef _WIN32
+	extern char* optarg;
+#endif
+	int ch;
+
+	srand((unsigned)time(NULL));
+	snprintf(SRTMP, MAX_RTMP_URL_LEN-1, "rtmp://www.easydss.com/live/%d", rand()%99999999);
+
 	int iret = EasyRTMP_Activate(KEY);
 	if (iret != 0)
 	{
-		printf("EasyRTMP_Activate error. ret=%d!!!", iret);
-		return 0;
+		printf("EasyRTMP_Activate error. ret=%d!!!\n", iret);
+		getchar();
+		return -1;
 	}
-	//创建EasyNVSource
+
+	PrintUsage(argv[0]);
+
+	while ((ch = getopt(argc, argv, "h:s:m:")) != EOF)
+	{
+		switch (ch)
+		{
+		case 'h':
+			PrintUsage(argv[0]);
+			return 0;
+			break;
+		case 'm':
+			snprintf(SRTMP, MAX_RTMP_URL_LEN - 1, "%s", optarg);
+			break;
+		case 's':
+			RTSPURL = optarg;
+			break;
+		case '?':
+			return 0;
+			break;
+		default:
+			break;
+		}
+	}
+
+	if (RTSPURL == NULL)
+	{
+		printf("Please input the parameter -s of the RTSP source URL!\n");
+		getchar();
+		return -2;
+	}
+
+	printf("Please Play the URL: %s", SRTMP);
+
 	EasyRTSP_Activate(EasyRTSPClient_KEY);
 	EasyRTSP_Init(&fNVSHandle);
-	if (NULL == fNVSHandle) return 0;
-
+	if (NULL == fNVSHandle) 
+    {
+        printf("EasyRTSP_Init error. ret=%d!!!\n", iret);
+		getchar();
+        return -3;
+    }
 	unsigned int mediaType = EASY_SDK_VIDEO_FRAME_FLAG | EASY_SDK_AUDIO_FRAME_FLAG;
-	//设置数据回调
+	
 	EasyRTSP_SetCallback(fNVSHandle, __RTSPSourceCallBack);
-	//打开RTSP网络串流
+
 	EasyRTSP_OpenStream(fNVSHandle, 0, RTSPURL, EASY_RTP_OVER_TCP, mediaType, 0, 0, NULL, 1000, 0, 1, 3);
 
 	getchar();
 
-	//关闭EasyNVSource拉取
 	EasyRTSP_CloseStream(fNVSHandle);
-	//释放EasyNVSource
+
 	EasyRTSP_Deinit(&fNVSHandle);
 	fNVSHandle = NULL;
 
 	Easy_AACEncoder_Release(g_rtmpPusher.m_pAACEncoderHandle);
-    
-	//是否RTMP推送
+
 	EasyRTMP_Release(g_rtmpPusher.rtmpHandle);
 	g_rtmpPusher.rtmpHandle = 0;
 
