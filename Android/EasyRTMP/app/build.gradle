@@ -8,8 +8,8 @@ android {
         applicationId "org.easydarwin.easyrtmp"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 13
-        versionName "1.0.17.0504"
+        versionCode 6
+        versionName "1.0.17.0511"
     }
     buildTypes {
         release {

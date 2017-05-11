@@ -16,6 +16,8 @@ import android.view.SurfaceHolder;
 import org.easydarwin.audio.AudioStream;
 import org.easydarwin.easypusher.BuildConfig;
 import org.easydarwin.easypusher.EasyApplication;
+import org.easydarwin.easypusher.R;
+import org.easydarwin.easypusher.StreamActivity;
 import org.easydarwin.easyrtmp.push.EasyRTMP;
 import org.easydarwin.hw.EncoderDebugger;
 import org.easydarwin.hw.NV21Convertor;
@@ -72,7 +74,10 @@ public class MediaStream {
     }
 
     public void startStream(String url, InitCallback callback) {
-        mEasyPusher.initPush(url, mApplicationContext, callback);
+        if(PreferenceManager.getDefaultSharedPreferences(EasyApplication.getEasyApplication()).getBoolean("key_enable_send_audio_only", false))
+            mEasyPusher.initPush(url, mApplicationContext, callback, ~0);
+        else
+            mEasyPusher.initPush(url, mApplicationContext, callback);
         pushStream = true;
     }
 
@@ -242,7 +247,7 @@ public class MediaStream {
                     }
                     if (PreferenceManager.getDefaultSharedPreferences(mApplicationContext).getBoolean("key_enable_video_overlay", false)) {
                         String txt = String.format("drawtext=fontfile=" + mApplicationContext.getFileStreamPath("SIMYOU.ttf") + ": text='%s%s':x=(w-text_w)/2:y=H-60 :fontcolor=white :box=1:boxcolor=0x00000000@0.3", "EasyPusher", new SimpleDateFormat("yyyy-MM-ddHHmmss").format(new Date()));
-                        txt = "EasyPusher " + new SimpleDateFormat("yy-MM-dd HH:mm:ss SSS").format(new Date());
+                        txt = EasyApplication.getEasyApplication().getString(R.string.app_name) + " " + new SimpleDateFormat("yy-MM-dd HH:mm:ss SSS").format(new Date());
                         overlay.overlay(data, txt);
                     }
                     int r = 0;
@@ -480,6 +485,12 @@ public class MediaStream {
                 mCamera.addCallbackBuffer(data);
                 return;
             }
+
+            if(PreferenceManager.getDefaultSharedPreferences(EasyApplication.getEasyApplication()).getBoolean("key_enable_send_audio_only", false)){
+                mCamera.addCallbackBuffer(data);
+                return;
+            }
+
             Camera.Size previewSize = mCamera.getParameters().getPreviewSize();
             if (data.length != previewSize.width * previewSize.height * 3 / 2) {
                 mCamera.addCallbackBuffer(data);

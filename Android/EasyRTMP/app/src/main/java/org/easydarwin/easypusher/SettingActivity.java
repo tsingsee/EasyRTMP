@@ -88,6 +88,14 @@ public class SettingActivity extends AppCompatActivity {
             }
         });
 
+        CheckBox sendAudioOnly = (CheckBox) findViewById(R.id.enable_send_audio_only);
+        sendAudioOnly.setChecked(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("key_enable_send_audio_only", false));
+        sendAudioOnly.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PreferenceManager.getDefaultSharedPreferences(SettingActivity.this).edit().putBoolean("key_enable_send_audio_only", isChecked).apply();
+            }
+        });
 
         CheckBox backgroundPushing = (CheckBox) findViewById(R.id.enable_background_camera_pushing);
         backgroundPushing.setChecked(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("key_enable_background_camera", true));

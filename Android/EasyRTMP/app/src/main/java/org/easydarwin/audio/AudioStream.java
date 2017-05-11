@@ -26,7 +26,7 @@ public class AudioStream {
     MediaCodec mMediaCodec;
     Pusher easyPusher;
     private Thread mThread = null;
-    String TAG = "EasyPusher";
+    String TAG = "AudioStream";
     //final String path = Environment.getExternalStorageDirectory() + "/123450001.aac";
 
     protected MediaCodec.BufferInfo mBufferInfo = new MediaCodec.BufferInfo();

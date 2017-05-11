@@ -48,7 +48,7 @@ public class EasyRTMP implements Pusher {
      * @param url       RTMP服务器地址
      * @param key        授权码
      */
-    public native long init(String url, String key, Context context, OnInitPusherCallback callback);
+    public native long init(String url, String key, Context context, OnInitPusherCallback callback, int fps);
 
     /**
      * 推送编码后的H264数据
@@ -75,14 +75,20 @@ public class EasyRTMP implements Pusher {
     }
 
     @Override
-    public synchronized void initPush(final String url, final Context context, final InitCallback callback) {
-        String key = "79397037795A36526D3430416E667059707756686B756876636D63755A57467A65575268636E64706269356C59584E35636E52746346634D5671442B6B75424859585A7062695A4359574A76633246414D6A41784E6B566863336C4559584A33615735555A5746745A57467A65513D3D";
+    public synchronized void initPush(final String url, final Context context, final InitCallback callback){
+        initPush(url, context, callback, 25);
+    }
+
+    @Override
+    public synchronized void initPush(final String url, final Context context, final InitCallback callback, int fps) {
+        String key = "79397037795A36526D34324171524E5A707578574A656876636D63755A57467A65575268636E64706269356C59584E35636E52746346634D5671442F7065424859585A7062695A4359574A76633246414D6A41784E6B566863336C4559584A33615735555A5746745A57467A65513D3D";
         mPusherObj = init(url, key, context, new OnInitPusherCallback() {
             @Override
             public void onCallback(int code) {
                 if (callback != null)callback.onCallback(code);
             }
-        });
+        },
+        fps);
     }
 
     public void push(byte[] data, long timestamp, int type){

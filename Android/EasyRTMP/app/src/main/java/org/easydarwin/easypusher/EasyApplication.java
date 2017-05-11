@@ -16,9 +16,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-/**
- * Created by Helong on 16/4/16-12:54.
- */
 public class EasyApplication extends Application {
 
     private static EasyApplication mApplication;

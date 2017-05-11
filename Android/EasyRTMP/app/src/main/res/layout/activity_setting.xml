@@ -55,6 +55,15 @@
         android:layout_height="wrap_content" />
 
     <CheckBox
+        android:id="@+id/enable_send_audio_only"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checked="false"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:text="只推送音频" />
+
+    <CheckBox
         android:id="@+id/enable_background_camera_pushing"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
