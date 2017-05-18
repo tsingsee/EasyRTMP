@@ -68,6 +68,7 @@ public class SettingActivity extends AppCompatActivity {
                 String ipValue = txtIp.getText().toString();
                 String portValue = txtPort.getText().toString();
                 String idValue = txtId.getText().toString();
+                String urlValue = rtmpUrl.getText().toString();
 
                 if (TextUtils.isEmpty(ipValue)) {
                     ipValue = Config.DEFAULT_SERVER_IP;
@@ -81,9 +82,14 @@ public class SettingActivity extends AppCompatActivity {
                     idValue = Config.DEFAULT_STREAM_ID;
                 }
 
+                if (TextUtils.isEmpty(urlValue)) {
+                    urlValue = Config.DEFAULT_SERVER_URL;
+                }
+
                 EasyApplication.getEasyApplication().saveStringIntoPref(Config.SERVER_IP, ipValue);
                 EasyApplication.getEasyApplication().saveStringIntoPref(Config.SERVER_PORT, portValue);
                 EasyApplication.getEasyApplication().saveStringIntoPref(Config.STREAM_ID, idValue);
+                EasyApplication.getEasyApplication().saveStringIntoPref(Config.SERVER_URL, urlValue);
                 finish();
             }
         });

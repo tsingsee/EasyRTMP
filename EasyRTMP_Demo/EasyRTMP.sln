@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EasyRTMP_SDK", "EasyRTMP_SDK\EasyRTMP_SDK.vcxproj", "{5B2EE120-098A-42CC-9418-9D61A4D0133E}"

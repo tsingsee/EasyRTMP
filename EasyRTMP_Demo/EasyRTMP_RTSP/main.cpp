@@ -233,7 +233,7 @@ int main(int argc, char * argv[])
 	int ch;
 
 	srand((unsigned)time(NULL));
-	snprintf(SRTMP, MAX_RTMP_URL_LEN-1, "rtmp://www.easydss.com/live/%d", rand()%99999999);
+	sprintf(SRTMP,"rtmp://www.easydss.com/live/%d", rand()%99999999);
 
 	int iret = EasyRTMP_Activate(KEY);
 	if (iret != 0)
@@ -254,7 +254,7 @@ int main(int argc, char * argv[])
 			return 0;
 			break;
 		case 'm':
-			snprintf(SRTMP, MAX_RTMP_URL_LEN - 1, "%s", optarg);
+			sprintf(SRTMP, "%s", optarg);
 			break;
 		case 's':
 			RTSPURL = optarg;
