@@ -137,7 +137,10 @@ public class MediaStream {
     }
 
     public void startStream(String url, InitCallback callback) {
-        mEasyPusher.initPush(url, mApplicationContext, callback);
+        if(PreferenceManager.getDefaultSharedPreferences(EasyApplication.getEasyApplication()).getBoolean(EasyApplication.KEY_ENABLE_VIDEO, true))
+            mEasyPusher.initPush(url, mApplicationContext, callback);
+        else
+            mEasyPusher.initPush(url, mApplicationContext, callback, ~0);
         pushStream = true;
     }
 

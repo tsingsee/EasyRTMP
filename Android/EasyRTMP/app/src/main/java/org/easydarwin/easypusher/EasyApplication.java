@@ -20,9 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-/**
- * Created by Helong on 16/4/16-12:54.
- */
 public class EasyApplication extends Application {
 
     public static final String KEY_ENABLE_VIDEO = "key-enable-video";
@@ -75,6 +72,13 @@ public class EasyApplication extends Application {
         if ("114.55.107.180".equals(defaultIP)
                 || "121.40.50.44".equals(defaultIP)){
             sharedPreferences.edit().putString(Config.SERVER_IP, Config.DEFAULT_SERVER_IP).apply();
+        }
+
+        String defaultRtmpURL = sharedPreferences.getString(Config.SERVER_URL, Config.DEFAULT_SERVER_URL);
+        int result1 = defaultRtmpURL.indexOf("rtmp://www.easydss.com/live");
+        int result2 = defaultRtmpURL.indexOf("rtmp://121.40.50.44/live");
+        if(result1 == -1 || result2 == -1){
+            sharedPreferences.edit().putString(Config.SERVER_URL, Config.DEFAULT_SERVER_URL).apply();
         }
     }
 

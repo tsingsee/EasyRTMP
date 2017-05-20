@@ -9,8 +9,11 @@ package org.easydarwin.easyrtmp.push;
 import android.content.Context;
 import android.util.Log;
 
+import org.easydarwin.bus.StreamStat;
 import org.easydarwin.push.InitCallback;
 import org.easydarwin.push.Pusher;
+
+import static org.easydarwin.easypusher.EasyApplication.BUS;
 
 public class EasyRTMP implements Pusher {
     private static String TAG = "EasyRTMP";
@@ -18,8 +21,9 @@ public class EasyRTMP implements Pusher {
         System.loadLibrary("easyrtmp");
     }
 
-    private int mTotal;
     private long pPreviewTS;
+    private long mTotal;
+    private int mTotalFrms;
 
     public interface OnInitPusherCallback {
         public void onCallback(int code);
@@ -52,7 +56,7 @@ public class EasyRTMP implements Pusher {
      * @param url       RTMP服务器地址
      * @param key        授权码
      */
-    public native long init(String url, String key, Context context, OnInitPusherCallback callback);
+    public native long init(String url, String key, Context context, OnInitPusherCallback callback, int fps);
 
     /**
      * 推送编码后的H264数据
@@ -78,9 +82,16 @@ public class EasyRTMP implements Pusher {
         throw new RuntimeException("not support");
     }
 
+    public synchronized void initPush(final String url, final Context context, final InitCallback callback){
+        initPush(url, context, callback, 25);
+    }
+
     @Override
-    public synchronized void initPush(final String url, final Context context, final InitCallback callback) {
-        String key = "79397037795A36526D3430416E667059707756686B756876636D63755A57467A65575268636E64706269356C59584E35636E52746346634D5671442B6B75424859585A7062695A4359574A76633246414D6A41784E6B566863336C4559584A33615735555A5746745A57467A65513D3D";
+    public synchronized void initPush(final String url, final Context context, final InitCallback callback, int fps) {
+        /*
+        *本Key为3个月临时授权License，如需商业使用，请邮件至support@easydarwin.org申请此产品的授权。
+        */
+        String key = "79397037795A36526D3430416878395A7075423470656876636D63755A57467A65575268636E64706269356C59584E35636E52746346634D5671442F7065424859585A7062695A4359574A76633246414D6A41784E6B566863336C4559584A33615735555A5746745A57467A65513D3D";
         mPusherObj = init(url, key, context, new OnInitPusherCallback() {
             int code = Integer.MAX_VALUE;
             @Override
@@ -90,7 +101,8 @@ public class EasyRTMP implements Pusher {
                     if (callback != null) callback.onCallback(code);
                 }
             }
-        });
+        },
+        fps);
     }
 
     public void push(byte[] data, long timestamp, int type){
@@ -99,12 +111,22 @@ public class EasyRTMP implements Pusher {
 
     public synchronized void push(byte[] data, int offset, int length, long timestamp, int type){
         mTotal += length;
-        if (System.currentTimeMillis() - pPreviewTS >= 1000){
-            Log.i(TAG, String.format("bps:%d", mTotal*1000/(System.currentTimeMillis() - pPreviewTS)));
+        if (type == 1){
+            mTotalFrms++;
+        }
+        long interval = System.currentTimeMillis() - pPreviewTS;
+        if (interval >= 3000){
+            long bps = mTotal * 1000 / (interval);
+            long fps = mTotalFrms * 1000 / (interval);
+            Log.i(TAG, String.format("bps:%d, fps:%d", fps, bps));
             pPreviewTS = System.currentTimeMillis();
             mTotal = 0;
+            mTotalFrms = 0;
+
+            BUS.post(new StreamStat((int)fps, (int)bps));
         }
         if (mPusherObj == 0) return;
+
         push(mPusherObj, data, offset, length, timestamp,type);
     }
 }
