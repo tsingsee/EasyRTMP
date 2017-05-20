@@ -56,8 +56,6 @@ public class BackgroundCameraService extends Service implements SurfaceHolder.Ca
     @Override
     public void onCreate() {
         super.onCreate();
-
-
         mMediaStream = EasyApplication.sMS;
 
         if (mMediaStream == null) {
@@ -74,8 +72,7 @@ public class BackgroundCameraService extends Service implements SurfaceHolder.Ca
         i = new Intent(this, BackgroundCameraService.class);
         PendingIntent deleteIntent = PendingIntent.getService(this, 0, i, 0);
 
-        notification = new NotificationCompat.Builder(this)
-                .setContentTitle("后台采集视频中").setAutoCancel(true)
+        notification = new NotificationCompat.Builder(this).setContentTitle("后台采集视频中").setAutoCancel(true)
                 .setDeleteIntent(deleteIntent).setContentIntent(contentIntent).build();
 
 //        notification = new NotificationCompat.Builder(this).setContentText()

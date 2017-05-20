@@ -6,8 +6,12 @@ import android.content.res.AssetManager;
 import android.hardware.Camera;
 import android.preference.PreferenceManager;
 
+import com.squareup.otto.Bus;
+import com.squareup.otto.ThreadEnforcer;
+
 import org.easydarwin.config.Config;
 import org.easydarwin.push.MediaStream;
+import org.easydarwin.push.MuxerModule;
 import org.easydarwin.util.Util;
 
 import java.io.File;
@@ -16,16 +20,24 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+/**
+ * Created by Helong on 16/4/16-12:54.
+ */
 public class EasyApplication extends Application {
 
+    public static final String KEY_ENABLE_VIDEO = "key-enable-video";
     private static EasyApplication mApplication;
+    public static MuxerModule module;
 
     public static MediaStream sMS;
+    public static final Bus BUS = new Bus(ThreadEnforcer.ANY);
 
     @Override
     public void onCreate() {
         super.onCreate();
         mApplication = this;
+        // for compatibility
+        resetDefaultServer();
         if (Util.getSupportResolution(this).size() == 0) {
             StringBuilder stringBuilder = new StringBuilder();
             Camera camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
@@ -54,6 +66,15 @@ public class EasyApplication extends Application {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    private void resetDefaultServer() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String defaultIP = sharedPreferences.getString(Config.SERVER_IP, Config.DEFAULT_SERVER_IP);
+        if ("114.55.107.180".equals(defaultIP)
+                || "121.40.50.44".equals(defaultIP)){
+            sharedPreferences.edit().putString(Config.SERVER_IP, Config.DEFAULT_SERVER_IP).apply();
         }
     }
 

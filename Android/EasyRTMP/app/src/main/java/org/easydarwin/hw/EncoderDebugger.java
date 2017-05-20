@@ -26,6 +26,7 @@ import java.io.StringWriter;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
+import org.easydarwin.easypusher.BuildConfig;
 import org.easydarwin.hw.CodecManager.Codec;
 
 import android.annotation.SuppressLint;
@@ -67,7 +68,7 @@ public class EncoderDebugger {
      * If this is set to false the test will be run only once and the result
      * will be saved in the shared preferences.
      */
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = BuildConfig.DEBUG;
 
     /**
      * Set this to true to see more logs.
@@ -211,7 +212,7 @@ public class EncoderDebugger {
                     + "encoderName", "");
             mEncoderColorFormat = mPreferences.getInt(PREF_PREFIX + resolution
                     + "colorFormat", 0);
-            mB64PPS = mPreferences.getString(PREF_PREFIX + resolution + "pps",
+            mB64PPS = mPreferences.getString(PREF_PREFIX + resolution + "bps",
                     "");
             mB64SPS = mPreferences.getString(PREF_PREFIX + resolution + "sps",
                     "");
@@ -354,7 +355,7 @@ public class EncoderDebugger {
                     mEncoderColorFormat);
             editor.putString(PREF_PREFIX + resolution + "encoderName",
                     mEncoderName);
-            editor.putString(PREF_PREFIX + resolution + "pps", mB64PPS);
+            editor.putString(PREF_PREFIX + resolution + "bps", mB64PPS);
             editor.putString(PREF_PREFIX + resolution + "sps", mB64SPS);
         }
 

@@ -8,16 +8,17 @@ import android.media.MediaFormat;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Process;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
 import org.easydarwin.audio.AudioStream;
 import org.easydarwin.easypusher.BuildConfig;
 import org.easydarwin.easypusher.EasyApplication;
-import org.easydarwin.easypusher.R;
-import org.easydarwin.easypusher.StreamActivity;
 import org.easydarwin.easyrtmp.push.EasyRTMP;
 import org.easydarwin.hw.EncoderDebugger;
 import org.easydarwin.hw.NV21Convertor;
@@ -40,9 +41,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 
-public class MediaStream {
+import dagger.Module;
+import dagger.Provides;
 
+@Module
+public class MediaStream {
     private static final boolean VERBOSE = BuildConfig.DEBUG;
+    private final boolean enanleVideo;
     Pusher mEasyPusher;
     static final String TAG = "EasyPusher";
     int width = 640, height = 480;
@@ -57,27 +62,82 @@ public class MediaStream {
     private boolean isCameraBack = true;
     private int mDgree;
     private Context mApplicationContext;
-    Thread pushThread;
-    boolean codecAvailable = false;
     private boolean mSWCodec;
-    private X264Encoder x264;
-    private Consumer mConsumer;
+    private VideoConsumer mVC;
+    private TxtOverlay overlay;
     private EasyMuxer mMuxer;
-    private int mTrackIndex;
+    private final HandlerThread mCameraThread;
+    private final Handler mCameraHandler;
+    private EncoderDebugger debugger;
+    private int previewFormat;
 
     public MediaStream(Context context, SurfaceHolder holder) {
+        this(context, holder, true);
+    }
+
+    public MediaStream(Context context, SurfaceHolder holder, boolean enableVideo) {
         mApplicationContext = context;
         mSurfaceHolderRef = new WeakReference(holder);
         if (EasyApplication.isRTMP())
             mEasyPusher = new EasyRTMP();
         else mEasyPusher = new EasyPusher();
+
+        EasyApplication.module = DaggerMuxerModule.builder().mediaStream(this).build();
+        mCameraThread = new HandlerThread("CAMERA"){
+            public void run(){
+                try{
+                    super.run();
+                }finally {
+                    stopStream();
+                    destroyCamera();
+                }
+            }
+        };
+        mCameraThread.start();
+        mCameraHandler = new Handler(mCameraThread.getLooper());
+        this.enanleVideo = enableVideo;
+
+        if (enableVideo)
+            previewCallback = new Camera.PreviewCallback() {
+
+                @Override
+                public void onPreviewFrame(byte[] data, Camera camera) {
+                    if (data == null) {
+                        return;
+                    }
+                    Camera.Size previewSize = mCamera.getParameters().getPreviewSize();
+                    if (data.length != previewSize.width * previewSize.height * 3 / 2) {
+                        mCamera.addCallbackBuffer(data);
+                        return;
+                    }
+                    if (mDgree == 0) {
+                        Camera.CameraInfo camInfo = new Camera.CameraInfo();
+                        Camera.getCameraInfo(mCameraId, camInfo);
+                        int cameraRotationOffset = camInfo.orientation;
+
+                        if (cameraRotationOffset % 180 != 0) {
+                            if (previewFormat == ImageFormat.YV12) {
+                                yuvRotate(data, 0, previewSize.width, previewSize.height, cameraRotationOffset);
+                            } else {
+                                yuvRotate(data, 1, previewSize.width, previewSize.height, cameraRotationOffset);
+                            }
+                        }
+                        save2file(data, String.format("/sdcard/yuv_%d_%d.yuv", previewSize.height, previewSize.width));
+                    }
+                    if (PreferenceManager.getDefaultSharedPreferences(mApplicationContext).getBoolean("key_enable_video_overlay", false)) {
+                        String txt = String.format("drawtext=fontfile=" + mApplicationContext.getFileStreamPath("SIMYOU.ttf") + ": text='%s%s':x=(w-text_w)/2:y=H-60 :fontcolor=white :box=1:boxcolor=0x00000000@0.3", "EasyPusher", new SimpleDateFormat("yyyy-MM-ddHHmmss").format(new Date()));
+                        txt = "EasyPusher " + new SimpleDateFormat("yy-MM-dd HH:mm:ss SSS").format(new Date());
+                        overlay.overlay(data, txt);
+                    }
+                    mVC.onVideo(data, previewFormat);
+                    mCamera.addCallbackBuffer(data);
+                }
+
+            };
     }
 
     public void startStream(String url, InitCallback callback) {
-        if(PreferenceManager.getDefaultSharedPreferences(EasyApplication.getEasyApplication()).getBoolean("key_enable_send_audio_only", false))
-            mEasyPusher.initPush(url, mApplicationContext, callback, ~0);
-        else
-            mEasyPusher.initPush(url, mApplicationContext, callback);
+        mEasyPusher.initPush(url, mApplicationContext, callback);
         pushStream = true;
     }
 
@@ -85,10 +145,6 @@ public class MediaStream {
         mEasyPusher.initPush(ip, port, String.format("%s.sdp", id), mApplicationContext, callback);
         pushStream = true;
     }
-//    public void setCallback(EasyPusher.OnInitPusherCallback callback) {
-//        mEasyPusher.setOnInitPusherCallback(callback);
-//    }
-
 
     public void setDgree(int dgree) {
         mDgree = dgree;
@@ -125,13 +181,36 @@ public class MediaStream {
         return maxFps;
     }
 
+    public void createCamera() {
 
-    public static final boolean useSWCodec() {
-        return Build.VERSION.SDK_INT >= 23;
-    }
+        if (Thread.currentThread() != mCameraThread) {
+            mCameraHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Process.setThreadPriority(Process.THREAD_PRIORITY_DEFAULT);
+                    createCamera();
+                }
+            });
+            return;
+        }
+        if (!enanleVideo) {
+            return;
+        }
 
 
-    public boolean createCamera() {
+        mSWCodec = PreferenceManager.getDefaultSharedPreferences(mApplicationContext).getBoolean("key-sw-codec", false);
+        if (mSWCodec) {
+            mMuxer = null;
+            mVC = new SWConsumer(mApplicationContext, mEasyPusher);
+        } else {
+            long millis = PreferenceManager.getDefaultSharedPreferences(mApplicationContext).getInt("record_interval", 300000);
+            if (PreferenceManager.getDefaultSharedPreferences(mApplicationContext).getBoolean("key_enable_local_record", false)) {
+                mMuxer = new EasyMuxer(new File(recordPath, new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss").format(new Date())).toString(), millis);
+            } else {
+                mMuxer = null;
+            }
+            mVC = new HWConsumer(mApplicationContext, mEasyPusher);
+        }
         try {
             mCamera = Camera.open(mCameraId);
 
@@ -144,8 +223,12 @@ public class MediaStream {
                 cameraRotationOffset += 180;
             int rotate = (360 + cameraRotationOffset - mDgree) % 360;
             parameters.setRotation(rotate);
-            mSWCodec = PreferenceManager.getDefaultSharedPreferences(mApplicationContext).getBoolean("key-sw-codec", useSWCodec());
-            parameters.setPreviewFormat(mSWCodec ? ImageFormat.YV12 : ImageFormat.NV21);
+            parameters.setRecordingHint(true);
+
+            debugger = EncoderDebugger.debug(mApplicationContext, width, height);
+
+            previewFormat = mSWCodec ? ImageFormat.YV12 : debugger.getNV21Convertor().getPlanar() ? ImageFormat.YV12 : ImageFormat.NV21;
+            parameters.setPreviewFormat(previewFormat);
             List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
             parameters.setPreviewSize(width, height);
             parameters.setPreviewFpsRange(max[0], max[1]);
@@ -153,11 +236,11 @@ public class MediaStream {
             int displayRotation;
             displayRotation = (cameraRotationOffset - mDgree + 360) % 360;
             mCamera.setDisplayOrientation(displayRotation);
+
             SurfaceHolder holder = mSurfaceHolderRef.get();
             if (holder != null) {
                 mCamera.setPreviewDisplay(holder);
             }
-            return true;
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
@@ -165,202 +248,6 @@ public class MediaStream {
             String stack = sw.toString();
             destroyCamera();
             e.printStackTrace();
-            return false;
-        }
-    }
-
-    Object lock = new byte[0];
-
-    class TimedBuffer {
-        byte[] buffer;
-        long time;
-
-        public TimedBuffer(byte[] data) {
-            buffer = data;
-            time = System.currentTimeMillis();
-        }
-    }
-
-    private ArrayBlockingQueue<TimedBuffer> yuvs = new ArrayBlockingQueue<TimedBuffer>(5);
-    private ArrayBlockingQueue<byte[]> yuv_caches = new ArrayBlockingQueue<byte[]>(10);
-
-    class Consumer extends Thread {
-        ByteBuffer[] inputBuffers;
-        ByteBuffer[] outputBuffers;
-        byte[] mPpsSps = new byte[0];
-        int keyFrmHelperCount = 0;
-        private long timeStamp = System.currentTimeMillis();
-
-        public Consumer() {
-            super("Consumer");
-        }
-
-        @Override
-        public void run() {
-            Process.setThreadPriority(Process.THREAD_PRIORITY_AUDIO);
-            Camera.Size previewSize = mCamera.getParameters().getPreviewSize();
-            byte[] h264 = new byte[(int) (previewSize.width * previewSize.height * 1.5)];
-//            byte[] overlayYuv = new byte[(int) (previewSize.width * previewSize.height * 1.5)];
-            TxtOverlay overlay = new TxtOverlay(mApplicationContext);
-            int region = 0;
-            try {
-                int xpos, ypos;
-
-
-                if (mDgree == 0) {
-                    overlay.init(previewSize.height, previewSize.width, mApplicationContext.getFileStreamPath("SIMYOU.ttf").getPath());
-                } else {
-                    overlay.init(previewSize.width, previewSize.height, mApplicationContext.getFileStreamPath("SIMYOU.ttf").getPath());
-                }
-//                overlay.init(previewSize.width, previewSize.height);
-                while (mConsumer != null) {
-                    TimedBuffer tb;
-//                    Log.i(TAG, String.format("cache yuv:%d", yuvs.size()));
-                    tb = yuvs.take();
-                    byte[] data = tb.buffer;
-
-                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    String t = format.format(new Date());
-//                    data = overlayYuv;
-
-                    long stamp = tb.time;
-                    int[] outLen = new int[1];
-                    if (mDgree == 0) {
-                        Camera.CameraInfo camInfo = new Camera.CameraInfo();
-                        Camera.getCameraInfo(mCameraId, camInfo);
-                        int cameraRotationOffset = camInfo.orientation;
-                        if (cameraRotationOffset == 90) {
-                            if (mSWCodec) {
-                                yuvRotate(data, 0, previewSize.width, previewSize.height, 90);
-                            } else {
-                                yuvRotate(data, 1, previewSize.width, previewSize.height, 90);
-                            }
-                        } else if (cameraRotationOffset == 270) {
-                            if (mSWCodec) {
-                                yuvRotate(data, 0, previewSize.width, previewSize.height, 270);
-                            } else {
-                                yuvRotate(data, 1, previewSize.width, previewSize.height, 270);
-                            }
-                        }
-
-                        save2file(data, String.format("/sdcard/yuv_%d_%d.yuv", previewSize.height, previewSize.width));
-                    }
-                    if (PreferenceManager.getDefaultSharedPreferences(mApplicationContext).getBoolean("key_enable_video_overlay", false)) {
-                        String txt = String.format("drawtext=fontfile=" + mApplicationContext.getFileStreamPath("SIMYOU.ttf") + ": text='%s%s':x=(w-text_w)/2:y=H-60 :fontcolor=white :box=1:boxcolor=0x00000000@0.3", "EasyPusher", new SimpleDateFormat("yyyy-MM-ddHHmmss").format(new Date()));
-                        txt = EasyApplication.getEasyApplication().getString(R.string.app_name) + " " + new SimpleDateFormat("yy-MM-dd HH:mm:ss SSS").format(new Date());
-                        overlay.overlay(data, txt);
-                    }
-                    int r = 0;
-                    byte[] newBuf = null;
-                    synchronized (lock) {
-                        if (mSWCodec && x264 != null) {
-                            byte[] keyFrm = new byte[1];
-                            if (false) {
-                                if (keyFrmHelperCount++ > 50) {
-                                    keyFrmHelperCount = 0;
-                                    keyFrm[0] = 1;
-                                } else {
-                                    keyFrm[0] = 0;
-                                }
-                            }
-                            long begin = System.currentTimeMillis();
-                            r = x264.encode(data, 0, h264, 0, outLen, keyFrm);
-                            if (r > 0) {
-                                Log.i(TAG, String.format("encode spend:%d ms. keyFrm:%d", System.currentTimeMillis() - begin, keyFrm[0]));
-//                                newBuf = new byte[outLen[0]];
-//                                System.arraycopy(h264, 0, newBuf, 0, newBuf.length);
-                            }
-                        }
-                    }
-                    if (mSWCodec) {
-                        if (r > 0) {
-                            mEasyPusher.push(h264, 0, outLen[0], stamp, 1);
-                        }
-                    } else {
-                        inputBuffers = mMediaCodec.getInputBuffers();
-                        outputBuffers = mMediaCodec.getOutputBuffers();
-                        int bufferIndex = mMediaCodec.dequeueInputBuffer(0);
-                        if (bufferIndex >= 0) {
-                            inputBuffers[bufferIndex].clear();
-                            mConvertor.convert(data, inputBuffers[bufferIndex]);
-                            mMediaCodec.queueInputBuffer(bufferIndex, 0, inputBuffers[bufferIndex].position(), System.nanoTime() / 1000, 0);
-
-                            MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
-                            int outputBufferIndex = 0;
-                            do {
-                                outputBufferIndex = mMediaCodec.dequeueOutputBuffer(bufferInfo, 0);
-                                if (outputBufferIndex == MediaCodec.INFO_TRY_AGAIN_LATER) {
-                                    // no output available yet
-                                } else if (outputBufferIndex == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
-                                    // not expected for an encoder
-                                } else if (outputBufferIndex == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
-                                    EasyMuxer muxer = MediaStream.this.mMuxer;
-                                    if (muxer != null) {
-                                        // should happen before receiving buffers, and should only happen once
-                                        MediaFormat newFormat = mMediaCodec.getOutputFormat();
-                                        muxer.addTrack(newFormat, true);
-                                    }
-                                } else if (outputBufferIndex < 0) {
-                                    // let's ignore it
-                                } else {
-
-                                    ByteBuffer outputBuffer = outputBuffers[outputBufferIndex];
-
-                                    EasyMuxer muxer = MediaStream.this.mMuxer;
-                                    if (muxer != null) {
-                                        muxer.pumpStream(outputBuffer, bufferInfo, true);
-                                    }
-//                        String data0 = String.format("%x %x %x %x %x %x %x %x %x %x ", outData[0], outData[1], outData[2], outData[3], outData[4], outData[5], outData[6], outData[7], outData[8], outData[9]);
-//                        Log.e("out_data", data0);
-
-                                    //记录pps和sps
-                                    int type = outputBuffer.get(4) & 0x07;
-
-                                    Log.d(TAG, String.format("type is %d", type));
-                                    if (type == 7 || type == 8) {
-                                        byte[] outData = new byte[bufferInfo.size];
-                                        outputBuffer.get(outData);
-                                        mPpsSps = outData;
-                                    } else if (type == 5) {
-                                        //在关键帧前面加上pps和sps数据
-                                        System.arraycopy(mPpsSps, 0, h264, 0, mPpsSps.length);
-                                        outputBuffer.get(h264, mPpsSps.length, bufferInfo.size);
-                                        mEasyPusher.push(h264, 0, mPpsSps.length + bufferInfo.size, bufferInfo.presentationTimeUs / 1000, 1);
-                                        if (BuildConfig.DEBUG)
-                                            Log.i(TAG, String.format("push video stamp:%d", bufferInfo.presentationTimeUs / 1000));
-
-                                    } else {
-                                        outputBuffer.get(h264, 0, bufferInfo.size);
-                                        if (System.currentTimeMillis() - timeStamp >= 3000) {
-                                            timeStamp = System.currentTimeMillis();
-                                            if (Build.VERSION.SDK_INT >= 23) {
-                                                Bundle params = new Bundle();
-                                                params.putInt(MediaCodec.PARAMETER_KEY_REQUEST_SYNC_FRAME, 0);
-                                                mMediaCodec.setParameters(params);
-                                            }
-                                        }
-                                        mEasyPusher.push(h264, 0, bufferInfo.size, bufferInfo.presentationTimeUs / 1000, 1);
-
-                                        if (BuildConfig.DEBUG)
-                                            Log.i(TAG, String.format("push video stamp:%d", bufferInfo.presentationTimeUs / 1000));
-                                    }
-                                    mMediaCodec.releaseOutputBuffer(outputBufferIndex, false);
-                                }
-                            }
-                            while (outputBufferIndex >= 0);
-
-                        } else {
-                            Log.e(TAG, "No buffer available !");
-                        }
-                    }
-                    yuv_caches.offer(data);
-
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } finally {
-                overlay.release();
-            }
         }
     }
 
@@ -402,9 +289,24 @@ public class MediaStream {
      * 开启预览
      */
     public synchronized void startPreview() {
+        if (Thread.currentThread() != mCameraThread) {
+            mCameraHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    startPreview();
+                }
+            });
+            return;
+        }
         if (mCamera != null) {
-            yuv_caches.clear();
-            yuvs.clear();
+            int previewFormat = mCamera.getParameters().getPreviewFormat();
+            Camera.Size previewSize = mCamera.getParameters().getPreviewSize();
+            int size = previewSize.width * previewSize.height * ImageFormat.getBitsPerPixel(previewFormat) / 8;
+            mCamera.addCallbackBuffer(new byte[size]);
+            mCamera.addCallbackBuffer(new byte[size]);
+            mCamera.setPreviewCallbackWithBuffer(previewCallback);
+
+
             mCamera.startPreview();
             try {
                 mCamera.autoFocus(null);
@@ -413,98 +315,43 @@ public class MediaStream {
                 Log.i(TAG, "auto foucus fail");
             }
 
-            int previewFormat = mCamera.getParameters().getPreviewFormat();
-            Camera.Size previewSize = mCamera.getParameters().getPreviewSize();
-            int size = previewSize.width * previewSize.height
-                    * ImageFormat.getBitsPerPixel(previewFormat)
-                    / 8;
-            mCamera.addCallbackBuffer(new byte[size]);
-            mCamera.addCallbackBuffer(new byte[size]);
-            mCamera.setPreviewCallbackWithBuffer(previewCallback);
-
-
-            if (mSWCodec) {
-                synchronized (lock) {
-                    x264 = new X264Encoder();
-
-//                ev.setBitrate(2000);
-//                ev.setFramerate(25);
-
-                    int bitrate;
-                    if (previewSize.width >= 1920) {
-                        bitrate = 3200;
-                    } else if (previewSize.width >= 1280) {
-                        bitrate = 1600;
-                    } else if (previewSize.width >= 640) {
-                        bitrate = 400;
-                    } else {
-                        bitrate = 300;
-                    }
-                    if (mDgree == 0) {
-                        x264.create(previewSize.height, previewSize.width, 15, bitrate);
-                    } else {
-                        x264.create(previewSize.width, previewSize.height, 15, bitrate);
-                    }
-                    codecAvailable = true;
+            boolean rotate = false;
+            if (mDgree == 0) {
+                Camera.CameraInfo camInfo = new Camera.CameraInfo();
+                Camera.getCameraInfo(mCameraId, camInfo);
+                int cameraRotationOffset = camInfo.orientation;
+                if (cameraRotationOffset == 90) {
+                    rotate = true;
+                } else if (cameraRotationOffset == 270) {
+                    rotate = true;
                 }
             }
 
-            Thread t = mConsumer;
-            if (t != null) {
-                mConsumer = null;
-                t.interrupt();
-                try {
-                    t.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            overlay = new TxtOverlay(mApplicationContext);
+            try {
+                if (!rotate) {
+                    mVC.onVideoStart(previewSize.width, previewSize.height);
+                    overlay.init(previewSize.width, previewSize.height, mApplicationContext.getFileStreamPath("SIMYOU.ttf").getPath());
+                } else {
+                    mVC.onVideoStart(previewSize.height, previewSize.width);
+                    overlay.init(previewSize.height, previewSize.width, mApplicationContext.getFileStreamPath("SIMYOU.ttf").getPath());
                 }
+            } catch (IOException ex) {
+                ex.printStackTrace();
             }
-
-            long millis = PreferenceManager.getDefaultSharedPreferences(mApplicationContext).getInt("record_interval", 300000);
-            if (!mSWCodec && PreferenceManager.getDefaultSharedPreferences(mApplicationContext).getBoolean("key_enable_local_record", false)) {
-                mMuxer = new EasyMuxer(new File(recordPath, new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss").format(new Date())).toString(), millis);
-            }
-            mConsumer = new Consumer();
-            mConsumer.start();
-
-            if (!mSWCodec) {
-                startMediaCodec();
-            } else {
-            }
-            audioStream = new AudioStream(mEasyPusher, mMuxer);
-            audioStream.startRecord();
         }
+        audioStream = new AudioStream(mEasyPusher);
+        audioStream.startRecord();
+    }
+
+    @Provides
+    @Nullable
+    public EasyMuxer getMuxer() {
+        return mMuxer;
     }
 
 
-    Camera.PreviewCallback previewCallback = new Camera.PreviewCallback() {
-
-        @Override
-        public void onPreviewFrame(byte[] data, Camera camera) {
-            if (data == null || !codecAvailable || mConsumer == null) {
-                mCamera.addCallbackBuffer(data);
-                return;
-            }
-
-            if(PreferenceManager.getDefaultSharedPreferences(EasyApplication.getEasyApplication()).getBoolean("key_enable_send_audio_only", false)){
-                mCamera.addCallbackBuffer(data);
-                return;
-            }
-
-            Camera.Size previewSize = mCamera.getParameters().getPreviewSize();
-            if (data.length != previewSize.width * previewSize.height * 3 / 2) {
-                mCamera.addCallbackBuffer(data);
-                return;
-            }
-            byte[] buffer = yuv_caches.poll();
-            if (buffer == null || buffer.length != data.length) {
-                buffer = new byte[data.length];
-            }
-            yuvs.offer(new TimedBuffer(data));
-            mCamera.addCallbackBuffer(buffer);
-        }
-
-    };
+    Camera.PreviewCallback previewCallback;
 
 
     /**
@@ -535,40 +382,27 @@ public class MediaStream {
      * 停止预览
      */
     public synchronized void stopPreview() {
-        Thread t = mConsumer;
-
-        if (t != null) {
-            mConsumer = null;
-            t.interrupt();
-            try {
-                t.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        if (Thread.currentThread() != mCameraThread) {
+            mCameraHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    stopPreview();
+                }
+            });
+            return;
         }
         if (mCamera != null) {
             mCamera.stopPreview();
             mCamera.setPreviewCallbackWithBuffer(null);
         }
-        synchronized (lock) {
-            if (x264 != null) {
-                x264.close();
-                x264 = null;
-                codecAvailable = false;
-            }
-        }
-
         if (audioStream != null) {
             audioStream.stop();
+            audioStream = null;
         }
-        if (mMediaCodec != null) {
-            stopMediaCodec();
-        }
-
-        if (mMuxer != null) {
-            mMuxer.release();
-            mMuxer = null;
-        }
+        if (mVC != null)
+            mVC.onVideoStop();
+        if (overlay != null)
+            overlay.release();
     }
 
     public Camera getCamera() {
@@ -580,12 +414,22 @@ public class MediaStream {
      * 切换前后摄像头
      */
     public void switchCamera() {
+        if (Thread.currentThread() != mCameraThread) {
+            mCameraHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    switchCamera();
+                }
+            });
+            return;
+        }
         int cameraCount = 0;
         if (isCameraBack) {
             isCameraBack = false;
         } else {
             isCameraBack = true;
         }
+        if (!enanleVideo) return;
         Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
         cameraCount = Camera.getNumberOfCameras();//得到摄像头的个数
         for (int i = 0; i < cameraCount; i++) {
@@ -626,6 +470,16 @@ public class MediaStream {
      * 销毁Camera
      */
     public synchronized void destroyCamera() {
+
+        if (Thread.currentThread() != mCameraThread) {
+            mCameraHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    destroyCamera();
+                }
+            });
+            return;
+        }
         if (mCamera != null) {
             mCamera.stopPreview();
             try {
@@ -634,60 +488,6 @@ public class MediaStream {
 
             }
             mCamera = null;
-        }
-    }
-
-    /**
-     * 初始化编码器
-     */
-    private void startMediaCodec() {
-            /*
-        SD (Low quality) SD (High quality) HD 720p
-1 HD 1080p
-1
-Video resolution 320 x 240 px 720 x 480 px 1280 x 720 px 1920 x 1080 px
-Video frame rate 20 fps 30 fps 30 fps 30 fps
-Video bitrate 384 Kbps 2 Mbps 4 Mbps 10 Mbps
-        */
-        framerate = 25;
-        if (width == 640 || height == 640) {
-            bitrate = 2000000;
-        } else if (width == 1280 || height == 1280) {
-            bitrate = 4000000;
-        } else {
-            bitrate = 2 * width * height;
-        }
-        EncoderDebugger debugger = EncoderDebugger.debug(mApplicationContext, width, height);
-        mConvertor = debugger.getNV21Convertor();
-        try {
-            mMediaCodec = MediaCodec.createByCodecName(debugger.getEncoderName());
-            MediaFormat mediaFormat;
-            if (mDgree == 0) {
-                mediaFormat = MediaFormat.createVideoFormat("video/avc", height, width);
-            } else {
-                mediaFormat = MediaFormat.createVideoFormat("video/avc", width, height);
-            }
-            mediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, bitrate);
-            mediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, framerate);
-            mediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, debugger.getEncoderColorFormat());
-            mediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
-            mMediaCodec.configure(mediaFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
-            mMediaCodec.start();
-            codecAvailable = true;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 停止编码并释放编码资源占用
-     */
-    private void stopMediaCodec() {
-        if (mMediaCodec != null) {
-            codecAvailable = false;
-            mMediaCodec.stop();
-            mMediaCodec.release();
-            mMediaCodec = null;
         }
     }
 
@@ -701,17 +501,27 @@ Video bitrate 384 Kbps 2 Mbps 4 Mbps 10 Mbps
         pushStream = false;
     }
 
-    public void destroyStream() {
-        pushStream = false;
-        if (pushThread != null) {
-            pushThread.interrupt();
-        }
-        destroyCamera();
-        stopMediaCodec();
-        mEasyPusher.stop();
-    }
-
     public void setSurfaceHolder(SurfaceHolder holder) {
         mSurfaceHolderRef = new WeakReference<SurfaceHolder>(holder);
+    }
+
+    public void release() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            mCameraThread.quitSafely();
+        } else {
+            if (!mCameraHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mCameraThread.quit();
+                }
+            })){
+                mCameraThread.quit();
+            }
+        }
+        try {
+            mCameraThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

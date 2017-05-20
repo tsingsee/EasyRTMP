@@ -21,6 +21,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:textColor="#fff"
+        android:id="@+id/stream_stat"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_below="@id/txt_res"
+        android:layout_height="wrap_content" />
+
     <Spinner
         android:layout_toRightOf="@+id/txt_res"
         android:layout_alignTop="@+id/txt_res"
@@ -55,7 +64,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:text="推送摄像头"
+                android:text="推送"
                 android:background="@drawable/button_selector"
                 android:textColor="#ffffff" />
 

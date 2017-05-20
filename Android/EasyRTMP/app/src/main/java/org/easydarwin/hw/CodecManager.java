@@ -65,7 +65,7 @@ public class CodecManager {
 		ArrayList<Codec> encoders = new ArrayList<Codec>();
 
 		// We loop through the encoders, apparently this can take up to a sec (testes on a GS3)
-		for(int j = MediaCodecList.getCodecCount() - 1; j >= 0; j--){
+		for(int j =0; j <  MediaCodecList.getCodecCount() - 1; j++){
 			MediaCodecInfo codecInfo = MediaCodecList.getCodecInfoAt(j);
 			if (!codecInfo.isEncoder()) continue;
 

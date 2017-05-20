@@ -33,6 +33,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.otto.Subscribe;
+
+import org.easydarwin.bus.StreamStat;
 import org.easydarwin.easyrtmp.push.EasyRTMP;
 import org.easydarwin.push.EasyPusher;
 import org.easydarwin.push.InitCallback;
@@ -43,6 +46,8 @@ import org.easydarwin.util.Util;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.easydarwin.easypusher.EasyApplication.BUS;
 
 public class StreamActivity extends AppCompatActivity implements SurfaceHolder.Callback, View.OnClickListener {
 
@@ -58,7 +63,7 @@ public class StreamActivity extends AppCompatActivity implements SurfaceHolder.C
     Spinner spnResolution;
     List<String> listResolution;
     MediaStream mMediaStream;
-    TextView txtStatus;
+    TextView txtStatus,streamStat;
     static Intent mResultIntent;
     static int mResultCode;
 
@@ -68,7 +73,8 @@ public class StreamActivity extends AppCompatActivity implements SurfaceHolder.C
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         spnResolution = (Spinner) findViewById(R.id.spn_resolution);
-
+        streamStat = (TextView) findViewById(R.id.stream_stat);
+        streamStat.setText(null);
         txtStatus = (TextView) findViewById(R.id.txt_stream_status);
         btnSwitch = (Button) findViewById(R.id.btn_switch);
         btnSwitch.setOnClickListener(this);
@@ -118,6 +124,8 @@ public class StreamActivity extends AppCompatActivity implements SurfaceHolder.C
         if (EasyApplication.isRTMP()){
             findViewById(R.id.toolbar_about).setVisibility(View.GONE);
         }
+
+        BUS.register(this);
     }
 
     private void startScreenPushIntent() {
@@ -226,12 +234,12 @@ public class StreamActivity extends AppCompatActivity implements SurfaceHolder.C
 
     @Override
     public void surfaceCreated(final SurfaceHolder holder) {
-
-        final File easyPusher = new File(Environment.getExternalStorageDirectory() + (EasyApplication.isRTMP()?"/EasyRTMP":"/EasyPusher"));
+        final File easyPusher = new File(Environment.getExternalStorageDirectory() + (EasyApplication.isRTMP()?"/EasyRTMP"
+                :"/EasyPusher"));
         easyPusher.mkdir();
         if (EasyApplication.sMS == null) {
-            mMediaStream = new MediaStream(getApplicationContext(), holder);
-
+            mMediaStream = new MediaStream(getApplicationContext(), holder, PreferenceManager.getDefaultSharedPreferences(this)
+                    .getBoolean(EasyApplication.KEY_ENABLE_VIDEO, true));
             mMediaStream.setRecordPath(easyPusher.getPath());
             EasyApplication.sMS = mMediaStream;
 
@@ -244,15 +252,20 @@ public class StreamActivity extends AppCompatActivity implements SurfaceHolder.C
                     service.stopMySelf();
 
                     mMediaStream = EasyApplication.sMS;
+                    mMediaStream.release();
+                    EasyApplication.sMS = mMediaStream = null;
+                    mMediaStream = new MediaStream(getApplicationContext(), holder, PreferenceManager.getDefaultSharedPreferences(StreamActivity.this)
+                            .getBoolean(EasyApplication.KEY_ENABLE_VIDEO, true));
+                    EasyApplication.sMS = mMediaStream;
                     mMediaStream.setSurfaceHolder(holder);
                     startCamera();
 
+                    findViewById(R.id.btn_switch).performClick();
                     unbindService(this);
                 }
 
                 @Override
                 public void onServiceDisconnected(ComponentName componentName) {
-
                 }
             }, 0);
         }
@@ -296,8 +309,9 @@ public class StreamActivity extends AppCompatActivity implements SurfaceHolder.C
         } else {
             mMediaStream.stopStream();
             EasyApplication.sMS = null;
+            mMediaStream.release();
+            mMediaStream = null;
         }
-        mMediaStream = null;
     }
 
 
@@ -443,8 +457,20 @@ public class StreamActivity extends AppCompatActivity implements SurfaceHolder.C
         }
     }
 
+    @Subscribe
+    public void onStreamStat(final StreamStat stat){
+        streamStat.post(new Runnable() {
+            @Override
+            public void run() {
+                streamStat.setText(getString(R.string.stream_stat, stat.fps, stat.bps));
+            }
+        });
+    }
+
+
     @Override
     protected void onDestroy() {
+        BUS.unregister(this);
         super.onDestroy();
         handler.removeCallbacksAndMessages(null);
     }
