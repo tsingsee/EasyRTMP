@@ -94,7 +94,7 @@ public class UpdateMgr {
         final String apkUrl=mApkUrl;
         Log.d(TAG, "kim showUpdateDialog. apkUrl="+apkUrl);
         new AlertDialog.Builder(mContext)
-                .setMessage("EasyPusher可以升级到更高的版本，是否升级")
+                .setMessage(EasyApplication.getEasyApplication().getString(R.string.app_name)+"可以升级到更高的版本，是否升级")
                 .setTitle("升级提示")
                 .setIcon(R.drawable.easy_logo)
                 .setPositiveButton("升级", new DialogInterface.OnClickListener() {

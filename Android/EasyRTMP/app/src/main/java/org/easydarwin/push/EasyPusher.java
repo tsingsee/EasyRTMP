@@ -104,6 +104,11 @@ public class EasyPusher implements Pusher{
         throw new RuntimeException("not support");
     }
 
+    @Override
+    public void initPush(String url, Context context, InitCallback callback, int fps) {
+        throw new RuntimeException("not support");
+    }
+
     public synchronized void push(byte[] data, int offset, int length, long timestamp, int type) {
         mTotal += length;
         if (type == 1){

@@ -25,6 +25,6 @@ public class Config {
 
 
     public static final String SERVER_URL = "serverUrl";
-    public static final String DEFAULT_SERVER_URL = "rtmp://www.easydss.com/live/stream_"+String.valueOf((int) (Math.random() * 1000000 + 100000));
+    public static final String DEFAULT_SERVER_URL = "rtmp://www.easydss.com:10085/live/stream_"+String.valueOf((int) (Math.random() * 1000000 + 100000));
 
 }
