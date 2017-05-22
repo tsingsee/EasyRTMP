@@ -1,6 +1,9 @@
 package org.easydarwin.sw;
 
 import android.content.Context;
+import android.text.TextUtils;
+
+import java.io.File;
 
 /**
  * Created by John on 2017/2/23.
@@ -9,15 +12,6 @@ import android.content.Context;
 public class TxtOverlay {
 
     static {
-
-//        System.loadLibrary("avdevice-57");
-//        System.loadLibrary("avcodec-57");
-//        System.loadLibrary("swresample-2");
-//        System.loadLibrary("avformat-57");
-//        System.loadLibrary("swscale-4");
-//        System.loadLibrary("avfilter-6");
-//        System.loadLibrary("avutil-55");
-//        System.loadLibrary("postproc-54");
         System.loadLibrary("TxtOverlay");
     }
 
@@ -29,6 +23,12 @@ public class TxtOverlay {
     private long ctx;
 
     public void init(int width, int height,String fonts) {
+        if (TextUtils.isEmpty(fonts)){
+            throw new IllegalArgumentException("the font file must be valid!");
+        }
+        if (!new File(fonts).exists()){
+            throw new IllegalArgumentException("the font file must be exists!");
+        }
         ctx = txtOverlayInit(width, height,fonts);
     }
 
@@ -39,11 +39,14 @@ public class TxtOverlay {
 //                + "overlay=" + 0 + ":" + 0
 //                + " [out]";
 //        if (ctx == 0) throw new RuntimeException("init should be called at first!");
+        if (ctx == 0) return;
         txtOverlay(ctx, data, txt);
     }
 
     public void release() {
+        if (ctx == 0) return;
         txtOverlayRelease(ctx);
+        ctx = 0;
     }
 
 

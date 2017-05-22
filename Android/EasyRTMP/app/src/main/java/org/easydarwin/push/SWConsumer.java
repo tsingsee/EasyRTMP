@@ -60,7 +60,6 @@ public class SWConsumer extends Thread implements VideoConsumer {
                 int r = 0;
                 TimedBuffer tb = yuvs.take();
                 byte[] data = tb.buffer;
-
                 long begin = System.currentTimeMillis();
                 r = x264.encode(data, 0, h264, 0, outLen, keyFrm);
                 if (r > 0) {
@@ -68,6 +67,7 @@ public class SWConsumer extends Thread implements VideoConsumer {
 //                                newBuf = new byte[outLen[0]];
 //                                System.arraycopy(h264, 0, newBuf, 0, newBuf.length);
                 }
+                keyFrm[0] = 0;
                 yuv_caches.offer(data);
                 mPusher.push(h264, 0, outLen[0], tb.time, 1);
             } catch (InterruptedException e) {
