@@ -1,0 +1,50 @@
+#!/bin/sh
+ 
+usage()
+{	
+	echo "**************build stream from EasyRTMP_RTSP demo******************"
+	echo "1. build 32bit program ./Buildit rtsp i386 [target in i386]"	
+	echo "2. build 64bit program ./Buildit rtsp x64 [target in x64]"	
+	echo "3. clean up ./Buildit rtsp clean"
+	echo "-----------------------------------------------------------"
+	echo "**************build stream from EasyRTMP_FILE demo******************"
+	echo "4. build 32bit program ./Buildit file i386 [target in i386]"	
+	echo "5. build 64bit program ./Buildit file x64 [target in x64]"	
+	echo "6. clean up ./Buildit file clean"
+	echo "-----------------------------------------------------------"
+	echo "**************build stream from EasyRTMP_SDK demo*******************"
+	echo "7. build 32bit program ./Buildit sdk i386 [target in i386]"	
+	echo "8. clean up ./Buildit sdk clean"
+	echo "-----------------------------------------------------------"
+}
+
+build()
+{		
+	if [ "$1" = "clean" ] ; then
+		make -f nbproject/Makefile-hisiv100.mk QMAKE= SUBPROJECTS= .clean-conf	
+		make -f nbproject/Makefile-i386.mk QMAKE= SUBPROJECTS= .clean-conf		
+		make -f nbproject/Makefile-x64.mk QMAKE= SUBPROJECTS= .clean-conf
+		make -f nbproject/Makefile-Debug.mk QMAKE= SUBPROJECTS= .clean-conf
+	elif [ "$1" = "hisiv100" ] ; then
+		make -f nbproject/Makefile-hisiv100.mk QMAKE= SUBPROJECTS= .build-conf	
+	elif [ "$1" = "x64" ] ; then
+		make -f nbproject/Makefile-x64.mk QMAKE= SUBPROJECTS= .build-conf
+	elif [ "$1" = "i386" ] ; then
+		make -f nbproject/Makefile-i386.mk QMAKE= SUBPROJECTS= .build-conf
+	else 		
+		usage;
+	fi
+}
+
+if [ "$1" = "rtsp" ] ; then
+	cd EasyRTMP_RTSP	
+	build $2;
+elif [ "$1" = "file" ] ; then
+	cd EasyRTMP_File
+	build $2;
+elif [ "$1" = "sdk" ] ; then
+	cd EasyRTMP_SDK
+	build $2;
+else
+	usage;
+fi

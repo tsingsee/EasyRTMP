@@ -1,31 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"><LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="20dp"
-    tools:context="org.easydarwin.easyrtmp.activity.SettingActivity">
+    tools:context="org.easydarwin.easypusher.SettingActivity">
 
-    <EditText
-        android:id="@+id/edt_url"
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="RTMP地址"
-        android:textColorHint="#80000000" />
+        android:id="@+id/rtsp_group"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <EditText
+            android:id="@+id/edt_server_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="EasyDarwin地址"
+            android:text="114.55.107.180"
+            android:textColorHint="#80000000" />
+
+        <EditText
+            android:id="@+id/edt_server_port"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="EasyDarwin端口（默认554）"
+            android:text="554"
+            android:textColorHint="#80000000" />
+
+        <EditText
+            android:id="@+id/edt_stream_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="摄像头直播流ID"
+            android:textColorHint="#80000000" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:text="注:如果支持屏幕推送,屏幕推送的ID为:'摄像头直播流ID_s'\n比如若摄像头直播流ID为'android_123',那屏幕推送ID就是'android_123_s'" />
+    </LinearLayout>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:text=""
+        android:id="@+id/rtmp_url"
+        android:layout_height="wrap_content" />
 
     <CheckBox
-        android:layout_width="match_parent"
         android:id="@+id/enable_background_camera_pushing"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:checked="false"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:text="使能摄像头后台采集"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:text="使能摄像头后台采集" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:layout_marginTop="8dp"
+        android:text="EasyPusher默认使用硬编码推送视频。如果需要测试软编码，请勾选下面的单选框" />
+    <CheckBox
+        android:id="@+id/use_x264_encode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checked="false"
+        android:text="使用软编码" />
+
+    <CheckBox
+        android:id="@+id/enable_video_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checked="false"
+        android:text="叠加水印" />
+    <CheckBox
+        android:id="@+id/enable_local_record"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checked="false"
+        android:text="同步本地录像（仅在硬编码情况下）" />
+    <CheckBox
+        android:id="@+id/only_push_audio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checked="false"
+        android:text="仅推送音频" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:text="录像文件时长"
+        android:id="@+id/record_file_millis"
+        android:onClick="onRecordFileMillis"
         android:layout_height="wrap_content" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onOpenLocalRecord"
+        android:text="打开录像文件夹"/>
+    <TextView
+        android:id="@+id/txt_version"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:text="20.54564gds" />
+
     <Button
         android:id="@+id/btn_save"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:text="保存" />
 
-</LinearLayout>
+</LinearLayout></ScrollView>
+

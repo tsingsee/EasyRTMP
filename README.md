@@ -13,6 +13,29 @@ EasyRTMP是EasyDarwin团队开发的一套RTMP直播推送功能组件，内部�
 - **Android**：Android安卓RTMP直播推流，采集安卓手机前/后摄像头、麦克风音视频推送直播；
 - **iOS**：iOS苹果RTMP直播推流，采集苹果手机前/后摄像头、麦克风音视频推送直播；
 
+### 编译方法 ###
+
+	Windows平台采用Visual Studio 2010编译
+
+	Linux下执行Builtit文件编译,具体如下：
+		chmod a+x Builtit
+		
+		"**************build stream from EasyRTMP_RTSP demo******************"
+		"1. build 32bit program ./Buildit rtsp i386 [target in i386]"	
+		"2. build 64bit program ./Buildit rtsp x64 [target in x64]"	
+		"3. clean up ./Buildit rtsp clean"
+		"-----------------------------------------------------------"
+		"**************build stream from EasyRTMP_FILE demo******************"
+		"4. build 32bit program ./Buildit file i386 [target in i386]"	
+		"5. build 64bit program ./Buildit file x64 [target in x64]"	
+		"6. clean up ./Buildit file clean"
+		"-----------------------------------------------------------"
+		"**************build stream from EasyRTMP_SDK demo*******************"
+		"7. build 32bit program ./Buildit sdk i386 [target in i386]"	
+		"8. clean up ./Buildit sdk clean"
+		"-----------------------------------------------------------"
+	
+
 ### 调用示例 ###
 
 - EasyRTMP Android：支持前/后摄像头直播、安卓屏幕直播
