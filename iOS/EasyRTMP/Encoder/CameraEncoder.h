@@ -47,5 +47,6 @@
 - (void) stopCamera;
 - (void)swapFrontAndBackCameras;
 - (void)swapResolution;
+- (void)changeCameraStatus;
 @end
 

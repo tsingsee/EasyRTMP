@@ -8,7 +8,7 @@
 #import "CameraEncoder.h"
 
 
-#define KEY "6A34714D6C354F576B5971414A553558714C485A4576466C59584E356348567A6147567958334E6B61395A58444661672F704C67523246326157346D516D466962334E68514449774D545A4659584E355247467964326C75564756686257566863336B3D"
+//#define KEY "6A34714D6C354F576B5971414A553558714C485A4576466C59584E356348567A6147567958334E6B61395A58444661672F704C67523246326157346D516D466962334E68514449774D545A4659584E355247467964326C75564756686257566863336B3D"
 
 //char* ConfigIP		= "121.40.50.44";	//Default EasyDarwin Address
 //char* ConfigIP		= "114.55.107.180";
@@ -57,7 +57,7 @@ static CameraEncoder *selfClass =nil;
     /*
        激活授权码，
      */
-    if (EasyRTMP_Activate("7939703779662B32734B79415374785970794F314A66644659584E35556C524E55436C58444661672F365867523246326157346D516D466962334E68514449774D545A4659584E355247467964326C75564756686257566863336B3D") == 0) {
+    if (EasyRTMP_Activate("7939703779662B32734B77414B694A5A707433527550644659584E35556C524E55434E58444661672B376A67523246326157346D516D466962334E68514449774D545A4659584E355247467964326C75564756686257566863336B3D") == 0) {
         if (_delegate) {
             [_delegate getConnectStatus:@"激活成功" isFist:1];
         }
@@ -283,6 +283,8 @@ static CameraEncoder *selfClass =nil;
 #pragma mark --开始推流
 - (void) startCamera:(NSString *)hostUrl
 {
+    NSUserDefaults *user = [NSUserDefaults standardUserDefaults];
+    int select = [[user objectForKey:@"isVideo"] intValue];
     if (!handle) {
         handle = EasyRTMP_Create();
         EasyRTMP_SetCallback(handle, easyPusher_Callback, "123");
@@ -290,7 +292,12 @@ static CameraEncoder *selfClass =nil;
     EASY_MEDIA_INFO_T mediainfo;
     memset(&mediainfo, 0, sizeof(EASY_MEDIA_INFO_T));
     mediainfo.u32VideoCodec = EASY_SDK_VIDEO_CODEC_H264;
-    mediainfo.u32VideoFps = 25;
+    if (select == 0) {
+        mediainfo.u32VideoFps = 20;
+    }else{
+        mediainfo.u32VideoFps = ~0; //~0只传音频
+    }
+    
     mediainfo.u32AudioCodec = EASY_SDK_AUDIO_CODEC_AAC;//SDK output Audio PCMA
     mediainfo.u32AudioSamplerate = 44100;
     mediainfo.u32AudioChannel = 2;
@@ -299,7 +306,62 @@ static CameraEncoder *selfClass =nil;
     EasyRTMP_Connect(handle, [url cStringUsingEncoding:NSUTF8StringEncoding]);
     EasyRTMP_InitMetadata(handle, &mediainfo, 1024);
 //    running = YES;
+}
 
+- (void)changeCameraStatus{
+    NSArray *inputs =self.videoCaptureSession.inputs;
+    NSUserDefaults *user = [NSUserDefaults standardUserDefaults];
+    int select = [[user objectForKey:@"isVideo"] intValue];
+    if (select == 0) {
+        if (inputs.count < 2) {
+            AVCaptureDevice *newCamera =nil;
+            AVCaptureDeviceInput *newInput =nil;
+            newCamera = [self cameraWithPosition:AVCaptureDevicePositionBack];
+            newInput = [AVCaptureDeviceInput deviceInputWithDevice:newCamera error:nil];
+            //                [self.previewLayer addAnimation:animation forKey:nil];
+            [self.videoCaptureSession beginConfiguration];
+            //                [self.videoCaptureSession removeInput:input];
+            if ([self.videoCaptureSession canAddInput:newInput]) {
+                [self.videoCaptureSession addInput:newInput];
+                
+            }
+            //                [self.videoCaptureSession removeOutput:_videoOutput];
+            
+            AVCaptureVideoDataOutput *  new_videoOutput = [AVCaptureVideoDataOutput new];
+            _videoOutput = new_videoOutput;
+            [new_videoOutput setSampleBufferDelegate:self queue:_videoQueue];
+            // 配置输出视频图像格式
+            NSDictionary *captureSettings = @{(NSString*)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA)};
+            new_videoOutput.videoSettings = captureSettings;
+            new_videoOutput.alwaysDiscardsLateVideoFrames = YES;
+            if ([self.videoCaptureSession canAddOutput:new_videoOutput]) {
+                [self.videoCaptureSession addOutput:new_videoOutput];
+            }
+            // 设置采集图像的方向,如果不设置，采集回来的图形会是旋转90度的
+            _videoConnection = [new_videoOutput connectionWithMediaType:AVMediaTypeVideo];
+            _videoConnection.videoOrientation = AVCaptureVideoOrientationPortrait;
+            // 保存Connection,用于SampleBufferDelegate中判断数据来源(video or audio?)
+            _videoConnection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeAuto;
+            _videoConnection = [new_videoOutput connectionWithMediaType:AVMediaTypeVideo];
+            
+            // Changes take effect once the outermost commitConfiguration is invoked.
+            [self.videoCaptureSession commitConfiguration];
+            
+        }
+        
+    }else{
+        
+        for (AVCaptureDeviceInput *input in inputs ) {
+            AVCaptureDevice *device = input.device;
+            if ( [device hasMediaType:AVMediaTypeVideo] ) {
+                [self.videoCaptureSession beginConfiguration];
+                [self.videoCaptureSession removeInput:input];
+                [self.videoCaptureSession removeOutput:_videoOutput];
+                [self.videoCaptureSession commitConfiguration];
+            }
+            
+        }
+    }
 }
 
 
@@ -376,8 +438,14 @@ int easyPusher_Callback(int _id,EASY_AV_Frame *_frame, EASY_RTMP_STATE_T _state,
         if (running)
         {
             dispatch_async(encodeQueue, ^{
-                
-                [h264Encoder encode:sampleBuffer];
+                NSUserDefaults *user = [NSUserDefaults standardUserDefaults];
+                int select = [[user objectForKey:@"isVideo"] intValue];
+                if (select == 0) {
+                     [h264Encoder encode:sampleBuffer];
+                }else{
+                     [h264Encoder encode:sampleBuffer];
+                }
+//
                 CFRelease(sampleBuffer);
             });
         }

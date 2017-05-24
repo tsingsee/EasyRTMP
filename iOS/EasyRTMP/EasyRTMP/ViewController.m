@@ -49,7 +49,7 @@
     encoder.previewLayer.hidden = NO;
     [encoder startCapture];
 
-    
+    [encoder changeCameraStatus];
     UIView *bottomView = [[UIView alloc] init];
     bottomView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:bottomView];
@@ -148,6 +148,10 @@
         }
     }
     
+}
+
+- (void)setFinish{
+    [encoder changeCameraStatus];
 }
 
 //- (void)getPushName{
@@ -295,6 +299,7 @@
 //    [startButton setTitle:@"开始推流" forState:UIControlStateNormal];
     
     EasySetingViewController *setVc = [[EasySetingViewController alloc] init];
+    setVc.delegate = self;
     [self presentViewController:setVc animated:YES completion:nil];
 }
 

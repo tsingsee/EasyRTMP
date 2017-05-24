@@ -19,14 +19,22 @@
     // Override point for customization after application launch.
     [application setIdleTimerDisabled:YES];
     NSString *url = [[NSUserDefaults standardUserDefaults] objectForKey:@"ConfigUrl"];
-    if (!url) {
-        NSMutableString *randomNum = [[NSMutableString alloc] initWithString:@"rtmp://www.easydss.com/live/stream_"];
+    if (!url || [url containsString:@"rtmp://www.easydss.com/live"] || [url containsString:@"121.40.50.44/live"] ) {
+        NSMutableString *randomNum = [[NSMutableString alloc] initWithString:@"rtmp://www.easydss.com:10085/live/stream_"];
         for(int i = 0; i < 6;i++){
             int num = arc4random() % 10;
             [randomNum appendString:[NSString stringWithFormat:@"%d",num]];
         }
         [[NSUserDefaults standardUserDefaults] setObject:randomNum forKey:@"ConfigUrl"];
     }
+//    if (!url) {
+//        NSMutableString *randomNum = [[NSMutableString alloc] initWithString:@"rtmp://www.easydss.com/live/stream_"];
+//        for(int i = 0; i < 6;i++){
+//            int num = arc4random() % 10;
+//            [randomNum appendString:[NSString stringWithFormat:@"%d",num]];
+//        }
+//        [[NSUserDefaults standardUserDefaults] setObject:randomNum forKey:@"ConfigUrl"];
+//    }
     [[NSUserDefaults standardUserDefaults] setObject:@"480*640" forKey:@"resolition"];
     [[NSUserDefaults standardUserDefaults] synchronize];
 //    [[NSUserDefaults standardUserDefaults] setObject:@"192.168.66.108" forKey:@"ConfigIP"];
