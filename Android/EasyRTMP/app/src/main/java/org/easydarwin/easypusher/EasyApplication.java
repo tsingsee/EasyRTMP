@@ -77,7 +77,7 @@ public class EasyApplication extends Application {
         String defaultRtmpURL = sharedPreferences.getString(Config.SERVER_URL, Config.DEFAULT_SERVER_URL);
         int result1 = defaultRtmpURL.indexOf("rtmp://www.easydss.com/live");
         int result2 = defaultRtmpURL.indexOf("rtmp://121.40.50.44/live");
-        if(result1 == -1 || result2 == -1){
+        if(result1 != -1 || result2 != -1){
             sharedPreferences.edit().putString(Config.SERVER_URL, Config.DEFAULT_SERVER_URL).apply();
         }
     }
