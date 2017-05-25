@@ -462,7 +462,7 @@ public class StreamActivity extends AppCompatActivity implements SurfaceHolder.C
         streamStat.post(new Runnable() {
             @Override
             public void run() {
-                streamStat.setText(getString(R.string.stream_stat, stat.fps, stat.bps));
+                streamStat.setText(getString(R.string.stream_stat, stat.fps, stat.bps/1024));
             }
         });
     }

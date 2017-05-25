@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">EasyPusher</string>
     <string name="version">1.0</string>
-    <string name="stream_stat" formatted="false">编码帧率：%d,码率：%dBps</string>
+    <string name="stream_stat" formatted="false">编码帧率：%d,码率：%dKBps</string>
 </resources>
