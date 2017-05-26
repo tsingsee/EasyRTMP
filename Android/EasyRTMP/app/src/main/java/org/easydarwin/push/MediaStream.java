@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.Message;
 import android.os.Process;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -47,6 +48,7 @@ import dagger.Provides;
 @Module
 public class MediaStream {
     private static final boolean VERBOSE = BuildConfig.DEBUG;
+    private static final int SWITCH_CAMERA = 11;
     private final boolean enanleVideo;
     Pusher mEasyPusher;
     static final String TAG = "EasyPusher";
@@ -94,7 +96,15 @@ public class MediaStream {
             }
         };
         mCameraThread.start();
-        mCameraHandler = new Handler(mCameraThread.getLooper());
+        mCameraHandler = new Handler(mCameraThread.getLooper()){
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                if (msg.what == SWITCH_CAMERA){
+                    switchCameraTask.run();
+                }
+            }
+        };
         this.enanleVideo = enableVideo;
 
         if (enableVideo)
@@ -419,51 +429,46 @@ public class MediaStream {
      * 切换前后摄像头
      */
     public void switchCamera() {
-        if (Thread.currentThread() != mCameraThread) {
-            mCameraHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    switchCamera();
-                }
-            });
-            return;
-        }
-        int cameraCount = 0;
-        if (isCameraBack) {
-            isCameraBack = false;
-        } else {
-            isCameraBack = true;
-        }
-        if (!enanleVideo) return;
-        Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
-        cameraCount = Camera.getNumberOfCameras();//得到摄像头的个数
-        for (int i = 0; i < cameraCount; i++) {
-            Camera.getCameraInfo(i, cameraInfo);//得到每一个摄像头的信息
-            if (mCameraId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                //现在是后置，变更为前置
-                if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {//代表摄像头的方位，CAMERA_FACING_FRONT前置      CAMERA_FACING_BACK后置
-                    mCamera.stopPreview();//停掉原来摄像头的预览
-                    mCamera.release();//释放资源
-                    mCamera = null;//取消原来摄像头
-                    mCameraId = Camera.CameraInfo.CAMERA_FACING_BACK;
-                    createCamera();
-                    startPreview();
-                    break;
-                }
+        if (mCameraHandler.hasMessages(SWITCH_CAMERA)) return;
+        mCameraHandler.sendEmptyMessage(SWITCH_CAMERA);
+    }
+
+    private Runnable switchCameraTask = new Runnable() {
+        @Override
+        public void run() {
+            int cameraCount = 0;
+            if (isCameraBack) {
+                isCameraBack = false;
             } else {
-                //现在是前置， 变更为后置
-                if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {//代表摄像头的方位，CAMERA_FACING_FRONT前置      CAMERA_FACING_BACK后置
-                    mCamera.stopPreview();//停掉原来摄像头的预览
-                    mCamera.release();//释放资源
-                    mCamera = null;//取消原来摄像头
-                    mCameraId = Camera.CameraInfo.CAMERA_FACING_FRONT;
-                    createCamera();
-                    startPreview();
-                    break;
+                isCameraBack = true;
+            }
+            if (!enanleVideo) return;
+            Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+            cameraCount = Camera.getNumberOfCameras();//得到摄像头的个数
+            for (int i = 0; i < cameraCount; i++) {
+                Camera.getCameraInfo(i, cameraInfo);//得到每一个摄像头的信息
+                stopPreview();
+                destroyCamera();
+                if (mCameraId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                    //现在是后置，变更为前置
+                    if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {//代表摄像头的方位，CAMERA_FACING_FRONT前置      CAMERA_FACING_BACK后置
+                        mCameraId = Camera.CameraInfo.CAMERA_FACING_BACK;
+                        createCamera();
+                        startPreview();
+                        break;
+                    }
+                } else {
+                    //现在是前置， 变更为后置
+                    if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {//代表摄像头的方位，CAMERA_FACING_FRONT前置      CAMERA_FACING_BACK后置
+                        mCameraId = Camera.CameraInfo.CAMERA_FACING_FRONT;
+                        createCamera();
+                        startPreview();
+                        break;
+                    }
                 }
             }
         }
-    }
+    };
 
     private String recordPath = Environment.getExternalStorageDirectory().getPath();
 

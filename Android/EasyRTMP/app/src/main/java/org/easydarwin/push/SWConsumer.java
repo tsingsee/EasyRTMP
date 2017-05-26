@@ -115,6 +115,9 @@ public class SWConsumer extends Thread implements VideoConsumer {
                 e.printStackTrace();
             }
         }while (isAlive());
-        x264.close();
+        if (x264 != null) {
+            x264.close();
+        }
+        x264 = null;
     }
 }

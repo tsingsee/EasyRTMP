@@ -191,6 +191,7 @@ public class HWConsumer extends Thread implements VideoConsumer {
         }while (isAlive());
         if (mMediaCodec != null) {
             stopMediaCodec();
+            mMediaCodec = null;
         }
     }
 
