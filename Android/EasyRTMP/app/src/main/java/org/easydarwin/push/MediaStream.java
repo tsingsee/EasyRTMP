@@ -225,7 +225,11 @@ public class MediaStream {
             mVC = new HWConsumer(mApplicationContext, mEasyPusher);
         }
         try {
-            mCamera = Camera.open(mCameraId);
+            if (Camera.getNumberOfCameras() < 2) {
+                mCamera = Camera.open();
+            } else {
+                mCamera = Camera.open(mCameraId);
+            }
 
             Camera.Parameters parameters = mCamera.getParameters();
             int[] max = determineMaximumSupportedFramerate(parameters);

@@ -10,6 +10,7 @@ import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.hardware.Camera;
 import android.media.projection.MediaProjectionManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -82,6 +83,11 @@ public class StreamActivity extends AppCompatActivity implements SurfaceHolder.C
         btnSetting.setOnClickListener(this);
         btnSwitchCemera = (Button) findViewById(R.id.btn_switchCamera);
         btnSwitchCemera.setOnClickListener(this);
+        if (Camera.getNumberOfCameras() < 2) {
+            btnSwitchCemera.setEnabled(false);
+        } else {
+            btnSwitchCemera.setEnabled(true);
+        }
         txtStreamAddress = (TextView) findViewById(R.id.txt_stream_address);
         SurfaceView surfaceView = (SurfaceView) findViewById(R.id.sv_surfaceview);
         surfaceView.getHolder().addCallback(this);
