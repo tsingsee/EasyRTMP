@@ -2,6 +2,7 @@ package org.easydarwin.push;
 
 import android.content.Context;
 import android.graphics.ImageFormat;
+import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.media.MediaCodec;
 import android.media.MediaFormat;
@@ -56,7 +57,7 @@ public class MediaStream {
     int framerate, bitrate;
     int mCameraId = Camera.CameraInfo.CAMERA_FACING_BACK;
     MediaCodec mMediaCodec;
-    WeakReference<SurfaceHolder> mSurfaceHolderRef;
+    WeakReference<SurfaceTexture> mSurfaceHolderRef;
     Camera mCamera;
     NV21Convertor mConvertor;
     boolean pushStream = false;//是否要推送数据
@@ -73,13 +74,13 @@ public class MediaStream {
     private EncoderDebugger debugger;
     private int previewFormat;
 
-    public MediaStream(Context context, SurfaceHolder holder) {
-        this(context, holder, true);
+    public MediaStream(Context context, SurfaceTexture texture) {
+        this(context, texture, true);
     }
 
-    public MediaStream(Context context, SurfaceHolder holder, boolean enableVideo) {
+    public MediaStream(Context context, SurfaceTexture texture, boolean enableVideo) {
         mApplicationContext = context;
-        mSurfaceHolderRef = new WeakReference(holder);
+        mSurfaceHolderRef = new WeakReference(texture);
         if (EasyApplication.isRTMP())
             mEasyPusher = new EasyRTMP();
         else mEasyPusher = new EasyPusher();
@@ -250,9 +251,9 @@ public class MediaStream {
             displayRotation = (cameraRotationOffset - mDgree + 360) % 360;
             mCamera.setDisplayOrientation(displayRotation);
 
-            SurfaceHolder holder = mSurfaceHolderRef.get();
+            SurfaceTexture holder = mSurfaceHolderRef.get();
             if (holder != null) {
-                mCamera.setPreviewDisplay(holder);
+                mCamera.setPreviewTexture(holder);
             }
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
@@ -511,8 +512,8 @@ public class MediaStream {
         pushStream = false;
     }
 
-    public void setSurfaceHolder(SurfaceHolder holder) {
-        mSurfaceHolderRef = new WeakReference<SurfaceHolder>(holder);
+    public void setSurfaceTexture(SurfaceTexture texture) {
+        mSurfaceHolderRef = new WeakReference<SurfaceTexture>(texture);
     }
 
     public void release() {

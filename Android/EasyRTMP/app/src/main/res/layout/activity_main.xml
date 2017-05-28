@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     tools:context="org.easydarwin.easypusher.StreamActivity">
 
-    <SurfaceView
+    <TextureView
         android:id="@+id/sv_surfaceview"
         android:keepScreenOn="true"
         android:layout_width="match_parent"

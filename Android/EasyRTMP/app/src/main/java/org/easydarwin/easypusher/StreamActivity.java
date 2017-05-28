@@ -10,6 +10,7 @@ import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.SurfaceTexture;
 import android.media.projection.MediaProjectionManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,8 +23,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Surface;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
+import android.view.TextureView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -49,7 +49,7 @@ import java.util.List;
 
 import static org.easydarwin.easypusher.EasyApplication.BUS;
 
-public class StreamActivity extends AppCompatActivity implements SurfaceHolder.Callback, View.OnClickListener {
+public class StreamActivity extends AppCompatActivity implements View.OnClickListener, TextureView.SurfaceTextureListener {
 
     static final String TAG = "EasyPusher";
     public static final int REQUEST_MEDIA_PROJECTION = 1002;
@@ -63,7 +63,7 @@ public class StreamActivity extends AppCompatActivity implements SurfaceHolder.C
     Spinner spnResolution;
     List<String> listResolution;
     MediaStream mMediaStream;
-    TextView txtStatus,streamStat;
+    TextView txtStatus, streamStat;
     static Intent mResultIntent;
     static int mResultCode;
 
@@ -83,10 +83,9 @@ public class StreamActivity extends AppCompatActivity implements SurfaceHolder.C
         btnSwitchCemera = (Button) findViewById(R.id.btn_switchCamera);
         btnSwitchCemera.setOnClickListener(this);
         txtStreamAddress = (TextView) findViewById(R.id.txt_stream_address);
-        SurfaceView surfaceView = (SurfaceView) findViewById(R.id.sv_surfaceview);
-        surfaceView.getHolder().addCallback(this);
-        surfaceView.getHolder().setFixedSize(getResources().getDisplayMetrics().widthPixels,
-                getResources().getDisplayMetrics().heightPixels);
+        TextureView surfaceView = (TextureView) findViewById(R.id.sv_surfaceview);
+        surfaceView.setSurfaceTextureListener(this);
+
         surfaceView.setOnClickListener(this);
 
         listResolution = new ArrayList<String>();
@@ -109,8 +108,8 @@ public class StreamActivity extends AppCompatActivity implements SurfaceHolder.C
             button.setText("停止推送屏幕");
             TextView viewById = (TextView) findViewById(R.id.push_screen_url);
             if (EasyApplication.isRTMP()) {
-                viewById.setText(EasyApplication.getEasyApplication().getUrl() +"_s");
-            }else{
+                viewById.setText(EasyApplication.getEasyApplication().getUrl() + "_s");
+            } else {
                 String ip = EasyApplication.getEasyApplication().getIp();
                 String port = EasyApplication.getEasyApplication().getPort();
                 String id = EasyApplication.getEasyApplication().getId();
@@ -121,7 +120,7 @@ public class StreamActivity extends AppCompatActivity implements SurfaceHolder.C
         UpdateMgr update = new UpdateMgr(this);
         update.checkUpdate();
 
-        if (EasyApplication.isRTMP()){
+        if (EasyApplication.isRTMP()) {
             findViewById(R.id.toolbar_about).setVisibility(View.GONE);
         }
 
@@ -135,8 +134,8 @@ public class StreamActivity extends AppCompatActivity implements SurfaceHolder.C
             TextView viewById = (TextView) findViewById(R.id.push_screen_url);
 
             if (EasyApplication.isRTMP()) {
-                viewById.setText(EasyApplication.getEasyApplication().getUrl() +"_s");
-            }else{
+                viewById.setText(EasyApplication.getEasyApplication().getUrl() + "_s");
+            } else {
                 String ip = EasyApplication.getEasyApplication().getIp();
                 String port = EasyApplication.getEasyApplication().getPort();
                 String id = EasyApplication.getEasyApplication().getId();
@@ -232,45 +231,6 @@ public class StreamActivity extends AppCompatActivity implements SurfaceHolder.C
         });
     }
 
-    @Override
-    public void surfaceCreated(final SurfaceHolder holder) {
-        final File easyPusher = new File(Environment.getExternalStorageDirectory() + (EasyApplication.isRTMP()?"/EasyRTMP"
-                :"/EasyPusher"));
-        easyPusher.mkdir();
-        if (EasyApplication.sMS == null) {
-            mMediaStream = new MediaStream(getApplicationContext(), holder, PreferenceManager.getDefaultSharedPreferences(this)
-                    .getBoolean(EasyApplication.KEY_ENABLE_VIDEO, true));
-            mMediaStream.setRecordPath(easyPusher.getPath());
-            EasyApplication.sMS = mMediaStream;
-
-            startCamera();
-        } else {
-            bindService(new Intent(this, BackgroundCameraService.class), new ServiceConnection() {
-                @Override
-                public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-                    BackgroundCameraService service = ((BackgroundCameraService.LocalBinder) iBinder).getService();
-                    service.stopMySelf();
-
-                    mMediaStream = EasyApplication.sMS;
-                    mMediaStream.release();
-                    EasyApplication.sMS = mMediaStream = null;
-                    mMediaStream = new MediaStream(getApplicationContext(), holder, PreferenceManager.getDefaultSharedPreferences(StreamActivity.this)
-                            .getBoolean(EasyApplication.KEY_ENABLE_VIDEO, true));
-                    EasyApplication.sMS = mMediaStream;
-                    mMediaStream.setSurfaceHolder(holder);
-                    startCamera();
-
-                    findViewById(R.id.btn_switch).performClick();
-                    unbindService(this);
-                }
-
-                @Override
-                public void onServiceDisconnected(ComponentName componentName) {
-                }
-            }, 0);
-        }
-    }
-
     private void startCamera() {
         mMediaStream.updateResolution(width, height);
         mMediaStream.setDgree(getDgree());
@@ -282,7 +242,7 @@ public class StreamActivity extends AppCompatActivity implements SurfaceHolder.C
             btnSwitch.setText("停止");
             if (EasyApplication.isRTMP()) {
                 txtStreamAddress.setText(EasyApplication.getEasyApplication().getUrl());
-            }else{
+            } else {
                 String ip = EasyApplication.getEasyApplication().getIp();
                 String port = EasyApplication.getEasyApplication().getPort();
                 String id = EasyApplication.getEasyApplication().getId();
@@ -292,28 +252,6 @@ public class StreamActivity extends AppCompatActivity implements SurfaceHolder.C
 
         initSpninner();
     }
-
-
-    @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-        boolean isStreaming = mMediaStream != null && mMediaStream.isStreaming();
-        mMediaStream.stopPreview();
-        mMediaStream.destroyCamera();
-        if (isStreaming && PreferenceManager.getDefaultSharedPreferences(StreamActivity.this).getBoolean("key_enable_background_camera", true)) {
-            startService(new Intent(StreamActivity.this, BackgroundCameraService.class));
-        } else {
-            mMediaStream.stopStream();
-            EasyApplication.sMS = null;
-            mMediaStream.release();
-            mMediaStream = null;
-        }
-    }
-
 
     private int getDgree() {
         int rotation = getWindowManager().getDefaultDisplay().getRotation();
@@ -387,7 +325,7 @@ public class StreamActivity extends AppCompatActivity implements SurfaceHolder.C
                                 }
                             }
                         });
-                    }else{
+                    } else {
                         String ip = EasyApplication.getEasyApplication().getIp();
                         String port = EasyApplication.getEasyApplication().getPort();
                         String id = EasyApplication.getEasyApplication().getId();
@@ -458,11 +396,11 @@ public class StreamActivity extends AppCompatActivity implements SurfaceHolder.C
     }
 
     @Subscribe
-    public void onStreamStat(final StreamStat stat){
+    public void onStreamStat(final StreamStat stat) {
         streamStat.post(new Runnable() {
             @Override
             public void run() {
-                streamStat.setText(getString(R.string.stream_stat, stat.fps, stat.bps/1024));
+                streamStat.setText(getString(R.string.stream_stat, stat.fps, stat.bps / 1024));
             }
         });
     }
@@ -522,5 +460,77 @@ public class StreamActivity extends AppCompatActivity implements SurfaceHolder.C
 
     public void onAbut(View view) {
         startActivity(new Intent(this, AboutActivity.class));
+    }
+
+    @Override
+    public void onSurfaceTextureAvailable(final SurfaceTexture surface, int width, int height) {
+        final File easyPusher = new File(Environment.getExternalStorageDirectory() + (EasyApplication.isRTMP() ? "/EasyRTMP"
+                : "/EasyPusher"));
+        easyPusher.mkdir();
+        if (mMediaStream != null){
+            mMediaStream.setSurfaceTexture(surface);
+            mMediaStream.createCamera();
+            mMediaStream.startPreview();
+            return;
+        }
+        if (EasyApplication.sMS == null) {
+            mMediaStream = new MediaStream(getApplicationContext(), surface, PreferenceManager.getDefaultSharedPreferences(this)
+                    .getBoolean(EasyApplication.KEY_ENABLE_VIDEO, true));
+            mMediaStream.setRecordPath(easyPusher.getPath());
+            EasyApplication.sMS = mMediaStream;
+
+            startCamera();
+        } else {
+            bindService(new Intent(this, BackgroundCameraService.class), new ServiceConnection() {
+                @Override
+                public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+                    BackgroundCameraService service = ((BackgroundCameraService.LocalBinder) iBinder).getService();
+                    service.stopMySelf();
+
+                    mMediaStream = EasyApplication.sMS;
+                    mMediaStream.release();
+                    EasyApplication.sMS = mMediaStream = null;
+                    mMediaStream = new MediaStream(getApplicationContext(), surface, PreferenceManager.getDefaultSharedPreferences(StreamActivity.this)
+                            .getBoolean(EasyApplication.KEY_ENABLE_VIDEO, true));
+                    EasyApplication.sMS = mMediaStream;
+                    startCamera();
+
+                    findViewById(R.id.btn_switch).performClick();
+                    unbindService(this);
+                }
+
+                @Override
+                public void onServiceDisconnected(ComponentName componentName) {
+                }
+            }, 0);
+        }
+    }
+
+    @Override
+    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+
+    }
+
+    @Override
+    public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+        boolean isStreaming = mMediaStream != null && mMediaStream.isStreaming();
+        mMediaStream.stopPreview();
+        mMediaStream.destroyCamera();
+        if (isFinishing())
+            if (isStreaming && PreferenceManager.getDefaultSharedPreferences(StreamActivity.this)
+                    .getBoolean("key_enable_background_camera", true)) {
+                startService(new Intent(StreamActivity.this, BackgroundCameraService.class));
+            } else {
+                mMediaStream.stopStream();
+                EasyApplication.sMS = null;
+                mMediaStream.release();
+                mMediaStream = null;
+            }
+        return true;
+    }
+
+    @Override
+    public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+
     }
 }
