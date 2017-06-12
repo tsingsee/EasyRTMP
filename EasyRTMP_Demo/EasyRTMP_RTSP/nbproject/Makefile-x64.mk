@@ -35,8 +35,8 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/1b3a7b97/main.o \
-	${OBJECTDIR}/getopt.o
+	${OBJECTDIR}/getopt.o \
+	${OBJECTDIR}/main.o
 
 
 # C Compiler Flags
@@ -63,15 +63,15 @@ ${CND_CONF}/easyrtmp_rtsp: ${OBJECTFILES}
 	${MKDIR} -p ${CND_CONF}
 	${LINK.cc} -o ${CND_CONF}/easyrtmp_rtsp ${OBJECTFILES} ${LDLIBSOPTIONS} -leasyrtmp -leasyrtspclient -leasyaacencoder -pthread -lrt
 
-${OBJECTDIR}/_ext/1b3a7b97/main.o: /mnt/hgfs/E/04GitExtension/EasyRTMP/EasyRTMP_Demo/EasyRTMP_RTSP/main.cpp
-	${MKDIR} -p ${OBJECTDIR}/_ext/1b3a7b97
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -IlibEasyRTSPClient/Include -I../Include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1b3a7b97/main.o /mnt/hgfs/E/04GitExtension/EasyRTMP/EasyRTMP_Demo/EasyRTMP_RTSP/main.cpp
-
 ${OBJECTDIR}/getopt.o: getopt.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -IlibEasyRTSPClient/Include -I../Include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/getopt.o getopt.c
+
+${OBJECTDIR}/main.o: main.cpp
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -IlibEasyRTSPClient/Include -I../Include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
 
 # Subprojects
 .build-subprojects:

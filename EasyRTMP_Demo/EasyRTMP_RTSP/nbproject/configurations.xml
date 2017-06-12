@@ -31,7 +31,7 @@
     </logicalFolder>
     <itemPath>getopt.c</itemPath>
     <itemPath>getopt.h</itemPath>
-    <itemPath>/mnt/hgfs/E/04GitExtension/EasyRTMP/EasyRTMP_Demo/EasyRTMP_RTSP/main.cpp</itemPath>
+    <itemPath>main.cpp</itemPath>
   </logicalFolder>
   <sourceRootList>
     <Elem>/mnt/hgfs/E/04GitExtension/EasyRTMP/EasyRTMP_Demo/EasyRTMP_RTSP</Elem>
@@ -70,14 +70,11 @@
           <commandLine>-leasyrtmp -leasyrtspclient -leasyaacencoder -pthread -lrt</commandLine>
         </linkerTool>
       </compileType>
-      <item path="/mnt/hgfs/E/04GitExtension/EasyRTMP/EasyRTMP_Demo/EasyRTMP_RTSP/main.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
       <item path="getopt.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="getopt.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
     </conf>
     <conf name="i386" type="1">
@@ -114,14 +111,11 @@
           <commandLine>-leasyrtmp -leasyrtspclient -leasyaacencoder -pthread -lrt</commandLine>
         </linkerTool>
       </compileType>
-      <item path="/mnt/hgfs/E/04GitExtension/EasyRTMP/EasyRTMP_Demo/EasyRTMP_RTSP/main.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
       <item path="getopt.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="getopt.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
     </conf>
   </confs>
