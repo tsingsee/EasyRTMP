@@ -112,7 +112,7 @@ public class HWConsumer extends Thread implements VideoConsumer {
         byte[] mPpsSps = new byte[0];
         byte[]h264 = new byte[mWidth*mHeight];
         do {
-            outputBufferIndex = mMediaCodec.dequeueOutputBuffer(bufferInfo, 30000);
+            outputBufferIndex = mMediaCodec.dequeueOutputBuffer(bufferInfo, 10000);
             if (outputBufferIndex == MediaCodec.INFO_TRY_AGAIN_LATER) {
                 // no output available yet
             } else if (outputBufferIndex == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
@@ -216,6 +216,7 @@ Video bitrate 384 Kbps 2 Mbps 4 Mbps 10 Mbps
 //        } else {
 //            bitrate = 2 * width * height;
 //        }
+
         int bitrate = (int) (mWidth*mHeight*20*2*0.05f);
         if (mWidth >= 1920 || mHeight >= 1920) bitrate *= 0.3;
         else if (mWidth >= 1280 || mHeight >= 1280) bitrate *= 0.4;

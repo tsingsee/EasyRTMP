@@ -26,7 +26,7 @@ public class EasyApplication extends Application {
     private static EasyApplication mApplication;
     public static MuxerModule module;
 
-    public static MediaStream sMS;
+
     public static final Bus BUS = new Bus(ThreadEnforcer.ANY);
 
     @Override
@@ -37,13 +37,7 @@ public class EasyApplication extends Application {
         resetDefaultServer();
         if (Util.getSupportResolution(this).size() == 0) {
             StringBuilder stringBuilder = new StringBuilder();
-            Camera camera;
-            if (Camera.getNumberOfCameras() < 2) {
-                camera = Camera.open();
-            } else {
-                camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
-            }
-
+            Camera camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
             List<Camera.Size> supportedPreviewSizes = camera.getParameters().getSupportedPreviewSizes();
             for (Camera.Size str : supportedPreviewSizes) {
                 stringBuilder.append(str.width + "x" + str.height).append(";");

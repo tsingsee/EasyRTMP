@@ -86,22 +86,22 @@ public class MediaStream {
         else mEasyPusher = new EasyPusher();
 
         EasyApplication.module = DaggerMuxerModule.builder().mediaStream(this).build();
-        mCameraThread = new HandlerThread("CAMERA"){
-            public void run(){
-                try{
+        mCameraThread = new HandlerThread("CAMERA") {
+            public void run() {
+                try {
                     super.run();
-                }finally {
+                } finally {
                     stopStream();
                     destroyCamera();
                 }
             }
         };
         mCameraThread.start();
-        mCameraHandler = new Handler(mCameraThread.getLooper()){
+        mCameraHandler = new Handler(mCameraThread.getLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
-                if (msg.what == SWITCH_CAMERA){
+                if (msg.what == SWITCH_CAMERA) {
                     switchCameraTask.run();
                 }
             }
@@ -148,7 +148,7 @@ public class MediaStream {
     }
 
     public void startStream(String url, InitCallback callback) {
-        if(PreferenceManager.getDefaultSharedPreferences(EasyApplication.getEasyApplication()).getBoolean(EasyApplication.KEY_ENABLE_VIDEO, true))
+        if (PreferenceManager.getDefaultSharedPreferences(EasyApplication.getEasyApplication()).getBoolean(EasyApplication.KEY_ENABLE_VIDEO, true))
             mEasyPusher.initPush(url, mApplicationContext, callback);
         else
             mEasyPusher.initPush(url, mApplicationContext, callback, ~0);
@@ -211,26 +211,8 @@ public class MediaStream {
             return;
         }
 
-
-        mSWCodec = PreferenceManager.getDefaultSharedPreferences(mApplicationContext).getBoolean("key-sw-codec", false);
-        if (mSWCodec) {
-            mMuxer = null;
-            mVC = new SWConsumer(mApplicationContext, mEasyPusher);
-        } else {
-            long millis = PreferenceManager.getDefaultSharedPreferences(mApplicationContext).getInt("record_interval", 300000);
-            if (PreferenceManager.getDefaultSharedPreferences(mApplicationContext).getBoolean("key_enable_local_record", false)) {
-                mMuxer = new EasyMuxer(new File(recordPath, new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss").format(new Date())).toString(), millis);
-            } else {
-                mMuxer = null;
-            }
-            mVC = new HWConsumer(mApplicationContext, mEasyPusher);
-        }
         try {
-            if (Camera.getNumberOfCameras() < 2) {
-                mCamera = Camera.open();
-            } else {
-                mCamera = Camera.open(mCameraId);
-            }
+            mCamera = Camera.open(mCameraId);
 
             Camera.Parameters parameters = mCamera.getParameters();
             int[] max = determineMaximumSupportedFramerate(parameters);
@@ -255,10 +237,6 @@ public class MediaStream {
             displayRotation = (cameraRotationOffset - mDgree + 360) % 360;
             mCamera.setDisplayOrientation(displayRotation);
 
-            SurfaceTexture holder = mSurfaceHolderRef.get();
-            if (holder != null) {
-                mCamera.setPreviewTexture(holder);
-            }
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
@@ -317,12 +295,37 @@ public class MediaStream {
             return;
         }
         if (mCamera != null) {
+
+            mSWCodec = PreferenceManager.getDefaultSharedPreferences(mApplicationContext).getBoolean("key-sw-codec", false);
+            if (mSWCodec) {
+                mMuxer = null;
+                mVC = new SWConsumer(mApplicationContext, mEasyPusher);
+            } else {
+                long millis = PreferenceManager.getDefaultSharedPreferences(mApplicationContext).getInt("record_interval", 300000);
+                if (PreferenceManager.getDefaultSharedPreferences(mApplicationContext).getBoolean("key_enable_local_record", false)) {
+                    mMuxer = new EasyMuxer(new File(recordPath, new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date())).toString(), millis);
+                } else {
+                    mMuxer = null;
+                }
+                mVC = new HWConsumer(mApplicationContext, mEasyPusher);
+            }
+
             int previewFormat = mCamera.getParameters().getPreviewFormat();
             Camera.Size previewSize = mCamera.getParameters().getPreviewSize();
             int size = previewSize.width * previewSize.height * ImageFormat.getBitsPerPixel(previewFormat) / 8;
             mCamera.addCallbackBuffer(new byte[size]);
             mCamera.addCallbackBuffer(new byte[size]);
             mCamera.setPreviewCallbackWithBuffer(previewCallback);
+
+
+            try {
+                SurfaceTexture holder = mSurfaceHolderRef.get();
+                if (holder != null) {
+                    mCamera.setPreviewTexture(holder);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
 
             mCamera.startPreview();
@@ -356,7 +359,7 @@ public class MediaStream {
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
-            }catch (IllegalArgumentException ex){
+            } catch (IllegalArgumentException ex) {
                 ex.printStackTrace();
             }
         }
@@ -423,6 +426,11 @@ public class MediaStream {
             mVC.onVideoStop();
         if (overlay != null)
             overlay.release();
+
+        if (mMuxer != null) {
+            mMuxer.release();
+            mMuxer = null;
+        }
     }
 
     public Camera getCamera() {
@@ -500,7 +508,6 @@ public class MediaStream {
             try {
                 mCamera.release();
             } catch (Exception e) {
-
             }
             mCamera = null;
         }
@@ -529,7 +536,7 @@ public class MediaStream {
                 public void run() {
                     mCameraThread.quit();
                 }
-            })){
+            })) {
                 mCameraThread.quit();
             }
         }

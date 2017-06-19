@@ -15,7 +15,10 @@ import org.easydarwin.bus.StreamStat;
 import static org.easydarwin.easypusher.EasyApplication.BUS;
 
 public class EasyPusher implements Pusher{
-    private static final String KEY = "6A36334A743536526D3430414567315A70764C747065354659584E355548567A614756795957356B636D39705A46634D5671442F7065424859585A7062695A4359574A76633246414D6A41784E6B566863336C4559584A33615735555A5746745A57467A65513D3D";
+    /*
+    *本Key为3个月临时授权License，如需商业使用，请邮件至support@easydarwin.org申请此产品的授权。
+    */
+    private static final String KEY = "6A36334A743536526D3430414645645A70726A7270666872615731305A584E30567778576F502B6C34456468646D6C754A6B4A68596D397A595541794D4445325257467A65555268636E6470626C526C5957316C59584E35";
     private static String TAG = "EasyPusher";
 
     static {
@@ -110,6 +113,7 @@ public class EasyPusher implements Pusher{
     }
 
     public synchronized void push(byte[] data, int offset, int length, long timestamp, int type) {
+        if (mPusherObj == 0) return;
         mTotal += length;
         if (type == 1){
             mTotalFrms++;
@@ -125,13 +129,11 @@ public class EasyPusher implements Pusher{
 
             BUS.post(new StreamStat((int)fps, (int)bps));
         }
-        if (mPusherObj == 0) return;
         push(mPusherObj, data, offset, length, timestamp, type);
     }
 
     public synchronized void push(byte[] data, long timestamp, int type) {
-        if (mPusherObj == 0) return;
-        push(mPusherObj, data, 0, data.length, timestamp, type);
+        push( data, 0, data.length, timestamp, type);
     }
 }
 

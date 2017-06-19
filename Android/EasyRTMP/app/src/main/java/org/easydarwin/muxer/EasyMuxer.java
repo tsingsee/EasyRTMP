@@ -7,6 +7,7 @@ import android.os.Build;
 import android.util.Log;
 
 import org.easydarwin.easypusher.BuildConfig;
+import org.easydarwin.push.EasyPusher;
 
 import java.io.File;
 import java.io.IOException;
@@ -138,6 +139,7 @@ public class EasyMuxer {
                     if (System.currentTimeMillis() - mBeginMillis <= 1500){
                         new File(mFilePath + "-" + index + ".mp4").delete();
                     }
+                    mAudioTrackIndex = mVideoTrackIndex = -1;
                 }
             }
         }

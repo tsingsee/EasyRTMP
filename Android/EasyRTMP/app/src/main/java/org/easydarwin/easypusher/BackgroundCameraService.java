@@ -32,12 +32,16 @@ public class BackgroundCameraService extends Service implements TextureView.Surf
 
     // Binder given to clients
     private final IBinder mBinder = new LocalBinder();
+    private SurfaceTexture mTexture;
+    private boolean mPenddingStartPreview;
 
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-        mMediaStream.setSurfaceTexture(surface);
-        mMediaStream.createCamera();
-        mMediaStream.startPreview();
+        mTexture = surface;
+        if (mPenddingStartPreview){
+            mMediaStream.setSurfaceTexture(mTexture);
+            mMediaStream.startPreview();
+        }
     }
 
     @Override
@@ -47,17 +51,31 @@ public class BackgroundCameraService extends Service implements TextureView.Surf
 
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-        if (mMediaStream != null) {
-            mMediaStream.stopPreview();
-            mMediaStream.destroyCamera();
-            mMediaStream = null;
-        }
+        mTexture = null;
         return true;
     }
 
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
 
+    }
+
+    public MediaStream getMediaStream() {
+        return mMediaStream;
+    }
+
+    public void setMediaStream(MediaStream ms) {
+        mMediaStream = ms;
+    }
+
+    public void activePreview() {
+        mMediaStream.stopPreview();
+        if (mTexture != null){
+            mMediaStream.setSurfaceTexture(mTexture);
+            mMediaStream.startPreview();
+        }else{
+            mPenddingStartPreview = true;
+        }
     }
 
     /**
@@ -76,19 +94,10 @@ public class BackgroundCameraService extends Service implements TextureView.Surf
         return mBinder;
     }
 
-
-    public BackgroundCameraService() {
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
-        mMediaStream = EasyApplication.sMS;
 
-        if (mMediaStream == null) {
-            stopMySelf();
-            return;
-        }
         // Start foreground service to avoid unexpected kill
         Notification notification = null;
 
@@ -122,19 +131,10 @@ public class BackgroundCameraService extends Service implements TextureView.Surf
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent == null) {
-            return 0;
+            return START_NOT_STICKY;
         }
 
         return super.onStartCommand(intent, flags, startId);
-    }
-    public void stopMySelf() {
-
-        if (mMediaStream != null) {
-            mMediaStream.stopPreview();
-            mMediaStream.destroyCamera();
-            mMediaStream = null;
-        }
-        stopSelf();
     }
 
 
