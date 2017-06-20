@@ -426,6 +426,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                 } else {
                     mMediaStream.stopStream();
                     btnSwitch.setText("开始");
+                    sendMessage("断开连接");
                 }
                 break;
             case R.id.btn_setting:
@@ -488,21 +489,21 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
     public void onBackPressed() {
         boolean isStreaming = mMediaStream != null && mMediaStream.isStreaming();
         if (isStreaming && PreferenceManager.getDefaultSharedPreferences(this).getBoolean("key_enable_background_camera", true)) {
-            new AlertDialog.Builder(this).setTitle("提醒").setMessage("您设置了使能摄像头后台采集,是否继续在后台采集并上传视频？如果是，记得直播结束后,再回来这里关闭直播。").setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            new AlertDialog.Builder(this).setTitle("是否允许后台上传？").setMessage("您设置了使能摄像头后台采集,是否继续在后台采集并上传视频？如果是，记得直播结束后,再回来这里关闭直播。").setNeutralButton("后台采集", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     PreferenceManager.getDefaultSharedPreferences(StreamActivity.this).edit().putBoolean("background_camera_alert", true).apply();
                     StreamActivity.super.onBackPressed();
                     Toast.makeText(StreamActivity.this, "正在后台采集并上传。", Toast.LENGTH_SHORT).show();
                 }
-            }).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            }).setPositiveButton("退出程序", new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {
+                public void onClick(DialogInterface dialogInterface, int i) {
                     mMediaStream.stopStream();
                     StreamActivity.super.onBackPressed();
-                    Toast.makeText(StreamActivity.this, "已经关闭上传。", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(StreamActivity.this, "程序已退出。", Toast.LENGTH_SHORT).show();
                 }
-            }).show();
+            }).setNegativeButton(android.R.string.cancel, null).show();
             return;
         } else {
             super.onBackPressed();
