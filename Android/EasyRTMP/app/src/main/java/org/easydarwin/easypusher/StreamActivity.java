@@ -128,7 +128,11 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
         }
 
         BUS.register(this);
-        String url = "http://www.easydarwin.org/versions/easyrtmp/version.txt";
+        String url = "http://www.easydarwin.org/versions/easypusher/version.txt";
+        if (EasyApplication.isRTMP())
+        {
+            url = "http://www.easydarwin.org/versions/easyrtmp/version.txt";
+        }
 
         update = new UpdateMgr(this);
         update.checkUpdate(url);
