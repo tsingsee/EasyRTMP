@@ -44,13 +44,6 @@
             android:name=".BackgroundCameraService"
             android:enabled="true" />
 
-        <receiver android:name="org.easydarwin.updatemgr.CompleteReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
-                <action android:name="android.intent.action.DOWNLOAD_NOTIFICATION_CLICKED" />
-            </intent-filter>
-        </receiver>
-
         <activity
             android:name="org.easydarwin.easypusher.MediaFilesActivity"
             android:label="文件夹" />

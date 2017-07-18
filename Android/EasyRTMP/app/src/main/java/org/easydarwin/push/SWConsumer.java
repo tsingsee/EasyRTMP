@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.ImageFormat;
 import android.util.Log;
 
+import org.easydarwin.muxer.EasyMuxer;
 import org.easydarwin.sw.JNIUtil;
 import org.easydarwin.sw.X264Encoder;
 
@@ -119,5 +120,10 @@ public class SWConsumer extends Thread implements VideoConsumer {
             x264.close();
         }
         x264 = null;
+    }
+
+    @Override
+    public void setMuxer(EasyMuxer muxer) {
+
     }
 }

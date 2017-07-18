@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
+import android.media.Image;
 import android.media.projection.MediaProjectionManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,6 +31,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,7 +63,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
     Button btnSwitch;
     Button btnSetting;
     TextView txtStreamAddress;
-    Button btnSwitchCemera;
+    ImageButton btnSwitchCemera;
     Spinner spnResolution;
     List<String> listResolution;
     MediaStream mMediaStream;
@@ -85,7 +87,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
         btnSwitch.setOnClickListener(this);
         btnSetting = (Button) findViewById(R.id.btn_setting);
         btnSetting.setOnClickListener(this);
-        btnSwitchCemera = (Button) findViewById(R.id.btn_switchCamera);
+        btnSwitchCemera = (ImageButton) findViewById(R.id.btn_switchCamera);
         btnSwitchCemera.setOnClickListener(this);
         txtStreamAddress = (TextView) findViewById(R.id.txt_stream_address);
         TextureView surfaceView = (TextureView) findViewById(R.id.sv_surfaceview);
@@ -181,6 +183,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                 }
         }
     }
+
     private void startScreenPushIntent() {
         if (StreamActivity.mResultIntent != null && StreamActivity.mResultCode != 0) {
             Intent intent = new Intent(getApplicationContext(), RecordService.class);
@@ -585,5 +588,18 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
 
+    }
+
+    public void onRecord(View view) {
+        ImageButton ib = (ImageButton) view;
+        if (mMediaStream != null) {
+            if (mMediaStream.isRecording()) {
+                mMediaStream.stopRecord();
+                ib.setImageResource(R.drawable.ic_action_record);
+            } else {
+                mMediaStream.startRecord();
+                ib.setImageResource(R.drawable.ic_action_recording);
+            }
+        }
     }
 }

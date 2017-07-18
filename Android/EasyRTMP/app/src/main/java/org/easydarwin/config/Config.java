@@ -16,7 +16,7 @@ public class Config {
     public static final String SERVER_PORT = "serverPort";
     public static final String STREAM_ID = "streamId";
     public static final String STREAM_ID_PREFIX = "";
-    public static final String DEFAULT_SERVER_IP = "www.easydarwin.org";
+    public static final String DEFAULT_SERVER_IP = "cloud.easydarwin.org";
     public static final String DEFAULT_SERVER_PORT = "554";
     public static final String DEFAULT_STREAM_ID = STREAM_ID_PREFIX + String.valueOf((int) (Math.random() * 1000000 + 100000));
     public static final String PREF_NAME = "easy_pref";

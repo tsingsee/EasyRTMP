@@ -6,12 +6,11 @@ import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
 import android.media.MediaRecorder;
+import android.os.Process;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.os.Process;
 
 import org.easydarwin.easypusher.BuildConfig;
-import org.easydarwin.easyrtmp.push.EasyRTMP;
 import org.easydarwin.muxer.EasyMuxer;
 import org.easydarwin.push.Pusher;
 
@@ -19,11 +18,7 @@ import java.nio.ByteBuffer;
 
 import javax.inject.Inject;
 
-import static org.easydarwin.easypusher.EasyApplication.module;
-
 public class AudioStream {
-    @Inject
-    @Nullable
     EasyMuxer muxer;
     private int samplingRate = 8000;
     private int bitRate = 16000;
@@ -60,6 +55,7 @@ public class AudioStream {
             -1, // 15
     };
     private Thread mWriter;
+    private MediaFormat newFormat;
 
     public AudioStream(Pusher easyPusher) {
         this.easyPusher = easyPusher;
@@ -70,8 +66,6 @@ public class AudioStream {
                 break;
             }
         }
-
-        module.inject(this);
     }
 
     /**
@@ -152,6 +146,15 @@ public class AudioStream {
 
     }
 
+
+    public synchronized void setMuxer(EasyMuxer muxer) {
+        if (muxer != null) {
+            if (newFormat != null)
+                muxer.addTrack(newFormat, false);
+        }
+        this.muxer = muxer;
+    }
+
     private class WriterThread extends Thread {
 
 
@@ -191,10 +194,12 @@ public class AudioStream {
                 } else if (index == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
                     mBuffers = mMediaCodec.getOutputBuffers();
                 } else if (index == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
-                    Log.v(TAG, "output format changed...");
-                    MediaFormat newFormat = mMediaCodec.getOutputFormat();
-                    if (muxer != null)
-                        muxer.addTrack(newFormat, false);
+                    synchronized (AudioStream.this) {
+                        Log.v(TAG, "output format changed...");
+                        newFormat = mMediaCodec.getOutputFormat();
+                        if (muxer != null)
+                            muxer.addTrack(newFormat, false);
+                    }
                 } else if (index == MediaCodec.INFO_TRY_AGAIN_LATER) {
 //                    Log.v(TAG, "No buffer available...");
                 } else {

@@ -6,7 +6,6 @@ import android.media.MediaCodec;
 import android.media.MediaFormat;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import org.easydarwin.easypusher.BuildConfig;
@@ -18,18 +17,11 @@ import org.easydarwin.sw.JNIUtil;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import javax.inject.Inject;
-
-import static org.easydarwin.easypusher.EasyApplication.module;
-
-
 /**
  * Created by apple on 2017/5/13.
  */
 public class HWConsumer extends Thread implements VideoConsumer {
     private static final String TAG = "Pusher";
-    @Inject
-    @Nullable
     public EasyMuxer mMuxer;
     private final Context mContext;
     private final Pusher mPusher;
@@ -40,20 +32,23 @@ public class HWConsumer extends Thread implements VideoConsumer {
     private ByteBuffer[] outputBuffers;
     private NV21Convertor mVideoConverter;
     private volatile boolean mVideoStarted;
+    private MediaFormat newFormat;
 
-    public HWConsumer(Context context,Pusher pusher){
+    public HWConsumer(Context context, Pusher pusher) {
         mContext = context;
         mPusher = pusher;
-        module.inject(this);
     }
+
+
     @Override
     public void onVideoStart(int width, int height) throws IOException {
+        newFormat = null;
         this.mWidth = width;
         this.mHeight = height;
         startMediaCodec();
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP +1) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP + 1) {
             inputBuffers = outputBuffers = null;
-        }else{
+        } else {
             inputBuffers = mMediaCodec.getInputBuffers();
             outputBuffers = mMediaCodec.getOutputBuffers();
         }
@@ -61,11 +56,12 @@ public class HWConsumer extends Thread implements VideoConsumer {
         mVideoStarted = true;
     }
 
-    final int millisPerframe = 1000/20;
+    final int millisPerframe = 1000 / 20;
     long lastPush = 0;
+
     @Override
     public int onVideo(byte[] data, int format) {
-        if (!mVideoStarted)return 0;
+        if (!mVideoStarted) return 0;
 
         try {
             if (lastPush == 0) {
@@ -76,20 +72,17 @@ public class HWConsumer extends Thread implements VideoConsumer {
                 time = millisPerframe - time;
                 if (time > 0) Thread.sleep(time / 2);
             }
-
-
-            if (format == ImageFormat.YV12 ) {
+            if (format == ImageFormat.YV12) {
                 JNIUtil.yV12ToYUV420P(data, mWidth, mHeight);
-            }else{
+            } else {
                 JNIUtil.nV21To420SP(data, mWidth, mHeight);
             }
-
             int bufferIndex = mMediaCodec.dequeueInputBuffer(0);
             if (bufferIndex >= 0) {
                 ByteBuffer buffer = null;
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                     buffer = mMediaCodec.getInputBuffer(bufferIndex);
-                }else{
+                } else {
                     buffer = inputBuffers[bufferIndex];
                 }
                 buffer.clear();
@@ -99,18 +92,18 @@ public class HWConsumer extends Thread implements VideoConsumer {
             }
             if (time > 0) Thread.sleep(time / 2);
             lastPush = System.currentTimeMillis();
-        }catch (InterruptedException ex){
+        } catch (InterruptedException ex) {
             ex.printStackTrace();
         }
         return 0;
     }
 
     @Override
-    public void run(){
+    public void run() {
         MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
         int outputBufferIndex = 0;
         byte[] mPpsSps = new byte[0];
-        byte[]h264 = new byte[mWidth*mHeight];
+        byte[] h264 = new byte[mWidth * mHeight];
         do {
             outputBufferIndex = mMediaCodec.dequeueOutputBuffer(bufferInfo, 10000);
             if (outputBufferIndex == MediaCodec.INFO_TRY_AGAIN_LATER) {
@@ -119,19 +112,22 @@ public class HWConsumer extends Thread implements VideoConsumer {
                 // not expected for an encoder
                 outputBuffers = mMediaCodec.getOutputBuffers();
             } else if (outputBufferIndex == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
-                EasyMuxer muxer = mMuxer;
-                if (muxer != null) {
-                    // should happen before receiving buffers, and should only happen once
-                    MediaFormat newFormat = mMediaCodec.getOutputFormat();
-                    muxer.addTrack(newFormat, true);
+                synchronized (HWConsumer.this) {
+                    newFormat = mMediaCodec.getOutputFormat();
+                    EasyMuxer muxer = mMuxer;
+                    if (muxer != null) {
+                        // should happen before receiving buffers, and should only happen once
+
+                        muxer.addTrack(newFormat, true);
+                    }
                 }
             } else if (outputBufferIndex < 0) {
                 // let's ignore it
             } else {
                 ByteBuffer outputBuffer;
-                if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     outputBuffer = mMediaCodec.getOutputBuffer(outputBufferIndex);
-                }else{
+                } else {
                     outputBuffer = outputBuffers[outputBufferIndex];
                 }
                 outputBuffer.position(bufferInfo.offset);
@@ -156,7 +152,7 @@ public class HWConsumer extends Thread implements VideoConsumer {
                 }
                 sync |= (bufferInfo.flags & MediaCodec.BUFFER_FLAG_SYNC_FRAME) != 0;
                 int len = mPpsSps.length + bufferInfo.size;
-                if (len > h264.length){
+                if (len > h264.length) {
                     h264 = new byte[len];
                 }
                 if (sync) {
@@ -165,7 +161,7 @@ public class HWConsumer extends Thread implements VideoConsumer {
                     mPusher.push(h264, 0, mPpsSps.length + bufferInfo.size, bufferInfo.presentationTimeUs / 1000, 1);
                     if (BuildConfig.DEBUG)
                         Log.i(TAG, String.format("push i video stamp:%d", bufferInfo.presentationTimeUs / 1000));
-                }else{
+                } else {
                     outputBuffer.get(h264, 0, bufferInfo.size);
                     mPusher.push(h264, 0, bufferInfo.size, bufferInfo.presentationTimeUs / 1000, 1);
                     if (BuildConfig.DEBUG)
@@ -182,17 +178,27 @@ public class HWConsumer extends Thread implements VideoConsumer {
     @Override
     public void onVideoStop() {
         do {
+            newFormat = null;
             mVideoStarted = false;
             try {
                 join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }while (isAlive());
+        } while (isAlive());
         if (mMediaCodec != null) {
             stopMediaCodec();
             mMediaCodec = null;
         }
+    }
+
+    @Override
+    public synchronized void setMuxer(EasyMuxer muxer) {
+        if (muxer != null) {
+            if (newFormat != null)
+                muxer.addTrack(newFormat, true);
+        }
+        mMuxer = muxer;
     }
 
 
@@ -217,7 +223,7 @@ Video bitrate 384 Kbps 2 Mbps 4 Mbps 10 Mbps
 //            bitrate = 2 * width * height;
 //        }
 
-        int bitrate = (int) (mWidth*mHeight*20*2*0.05f);
+        int bitrate = (int) (mWidth * mHeight * 20 * 2 * 0.05f);
         if (mWidth >= 1920 || mHeight >= 1920) bitrate *= 0.3;
         else if (mWidth >= 1280 || mHeight >= 1280) bitrate *= 0.4;
         else if (mWidth >= 720 || mHeight >= 720) bitrate *= 0.6;

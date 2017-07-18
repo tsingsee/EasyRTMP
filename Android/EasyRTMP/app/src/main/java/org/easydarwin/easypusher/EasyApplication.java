@@ -24,7 +24,6 @@ public class EasyApplication extends Application {
 
     public static final String KEY_ENABLE_VIDEO = "key-enable-video";
     private static EasyApplication mApplication;
-    public static MuxerModule module;
 
 
     public static final Bus BUS = new Bus(ThreadEnforcer.ANY);
@@ -70,7 +69,8 @@ public class EasyApplication extends Application {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String defaultIP = sharedPreferences.getString(Config.SERVER_IP, Config.DEFAULT_SERVER_IP);
         if ("114.55.107.180".equals(defaultIP)
-                || "121.40.50.44".equals(defaultIP)){
+                || "121.40.50.44".equals(defaultIP)
+                || "www.easydarwin.org".equals(defaultIP)){
             sharedPreferences.edit().putString(Config.SERVER_IP, Config.DEFAULT_SERVER_IP).apply();
         }
 
