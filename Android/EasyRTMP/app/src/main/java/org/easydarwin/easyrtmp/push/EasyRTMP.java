@@ -13,6 +13,7 @@ import org.easydarwin.bus.StreamStat;
 import org.easydarwin.push.InitCallback;
 import org.easydarwin.push.Pusher;
 
+import static org.easydarwin.easypusher.BuildConfig.RTMP_KEY;
 import static org.easydarwin.easypusher.EasyApplication.BUS;
 
 public class EasyRTMP implements Pusher {
@@ -91,8 +92,7 @@ public class EasyRTMP implements Pusher {
         /*
         *本Key为3个月临时授权License，如需商业使用，请邮件至support@easydarwin.org申请此产品的授权。
         */
-        String key = "79397037795A36526D34304175475A5A70706C48532B6876636D63755A57467A65575268636E64706269356C59584E35636E52746346634D5671442F532B424859585A7062695A4359574A76633246414D6A41784E6B566863336C4559584A33615735555A5746745A57467A65513D3D";
-        mPusherObj = init(url, key, context, new OnInitPusherCallback() {
+        mPusherObj = init(url, RTMP_KEY, context, new OnInitPusherCallback() {
             int code = Integer.MAX_VALUE;
             @Override
             public void onCallback(int code) {
