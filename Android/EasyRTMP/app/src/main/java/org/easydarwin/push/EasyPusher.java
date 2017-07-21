@@ -11,6 +11,7 @@ import android.provider.Settings;
 import android.util.Log;
 
 import org.easydarwin.bus.StreamStat;
+import org.easydarwin.easypusher.BuildConfig;
 
 import static org.easydarwin.easypusher.EasyApplication.BUS;
 
@@ -18,7 +19,7 @@ public class EasyPusher implements Pusher{
     /*
     *本Key为3个月临时授权License，如需商业使用，请邮件至support@easydarwin.org申请此产品的授权。
     */
-    private static final String KEY = "6A36334A743536526D3430414645645A70726A7270666872615731305A584E30567778576F502B6C34456468646D6C754A6B4A68596D397A595541794D4445325257467A65555268636E6470626C526C5957316C59584E35";
+    private static final String KEY = BuildConfig.RTSP_KEY;
     private static String TAG = "EasyPusher";
 
     static {
