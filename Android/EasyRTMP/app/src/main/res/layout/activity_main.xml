@@ -40,6 +40,18 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:text="00:00"
+            style="@style/Base.Widget.AppCompat.ActionButton"
+            android:textColor="#FF0000"
+            android:drawableLeft="@drawable/recording_marker_shape"
+            android:drawablePadding="5dp"
+            android:visibility="gone"
+            android:id="@+id/tv_start_record"
+            android:gravity="center_vertical"
+            android:layout_height="wrap_content" />
+
         <ImageButton
             android:layout_width="wrap_content"
             android:src="@drawable/ic_action_record"
@@ -58,7 +70,7 @@
             android:layout_gravity="end"
             android:layout_marginTop="8dp"
             android:textAlignment="@id/txt_res"
-            android:onClick="onAbut"
+            android:onClick="onClick"
             android:layout_height="wrap_content" />
         <ImageButton
             android:layout_width="wrap_content"

@@ -241,7 +241,7 @@ public class MediaStream {
 //            parameters.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_AUTO);
 //            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
 //            parameters.setSceneMode(Camera.Parameters.SCENE_MODE_AUTO);
-            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+//            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
 //            mCamera.setFaceDetectionListener(new );
 
 //            if (parameters.isAutoWhiteBalanceLockSupported()){

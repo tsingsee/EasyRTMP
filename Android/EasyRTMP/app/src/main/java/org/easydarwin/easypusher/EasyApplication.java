@@ -7,8 +7,11 @@ import android.hardware.Camera;
 import android.preference.PreferenceManager;
 
 import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 import com.squareup.otto.ThreadEnforcer;
 
+import org.easydarwin.bus.StartRecord;
+import org.easydarwin.bus.StopRecord;
 import org.easydarwin.config.Config;
 import org.easydarwin.push.MediaStream;
 import org.easydarwin.push.MuxerModule;
@@ -27,6 +30,8 @@ public class EasyApplication extends Application {
 
 
     public static final Bus BUS = new Bus(ThreadEnforcer.ANY);
+    public long mRecordingBegin;
+    public boolean mRecording;
 
     @Override
     public void onCreate() {
@@ -63,6 +68,8 @@ public class EasyApplication extends Application {
                 e.printStackTrace();
             }
         }
+
+        BUS.register(this);
     }
 
     private void resetDefaultServer() {
@@ -128,5 +135,17 @@ public class EasyApplication extends Application {
 
     public static boolean isRTMP() {
         return "rtmp".equals(BuildConfig.FLAVOR);
+    }
+
+    @Subscribe
+    public void onStartRecord(StartRecord sr){
+        mRecording = true;
+        mRecordingBegin = System.currentTimeMillis();
+    }
+
+    @Subscribe
+    public void onStopRecord(StopRecord sr){
+        mRecording = false;
+        mRecordingBegin = 0;
     }
 }

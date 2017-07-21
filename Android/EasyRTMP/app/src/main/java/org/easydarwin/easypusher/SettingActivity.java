@@ -7,12 +7,10 @@
 
 package org.easydarwin.easypusher;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
@@ -20,7 +18,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -111,17 +108,6 @@ public class SettingActivity extends AppCompatActivity {
             }
         });
 
-
-        CheckBox enable_local_record = (CheckBox) findViewById(R.id.enable_local_record);
-        enable_local_record.setChecked(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("key_enable_local_record", false));
-
-        enable_local_record.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                PreferenceManager.getDefaultSharedPreferences(SettingActivity.this).edit().putBoolean("key_enable_local_record", isChecked).apply();
-            }
-        });
-
         TextView versionCode = (TextView) findViewById(R.id.txt_version);
         try {
             versionCode.setText("版本:" + getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
@@ -157,22 +143,5 @@ public class SettingActivity extends AppCompatActivity {
 
     public void onOpenLocalRecord(View view) {
         startActivity(new Intent(this, MediaFilesActivity.class));
-    }
-
-    public void onRecordFileMillis(View view) {
-
-        View contentView = getLayoutInflater().inflate(R.layout.record_file_millis_dlg, null, false);
-        final NumberPicker np = (NumberPicker) contentView.findViewById(R.id.record_file_millis_picker);
-        np.setMaxValue(600);
-        np.setMinValue(10);
-
-        int record_interval = PreferenceManager.getDefaultSharedPreferences(SettingActivity.this).getInt("record_interval", 300000);
-        np.setValue(record_interval/1000);
-        new AlertDialog.Builder(this).setView(contentView).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                PreferenceManager.getDefaultSharedPreferences(SettingActivity.this).edit().putInt("record_interval", np.getValue() * 1000).apply();
-            }
-        }).setNegativeButton(android.R.string.cancel, null).show();
     }
 }

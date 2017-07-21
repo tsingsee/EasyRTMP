@@ -38,6 +38,8 @@ import android.widget.Toast;
 
 import com.squareup.otto.Subscribe;
 
+import org.easydarwin.bus.StartRecord;
+import org.easydarwin.bus.StopRecord;
 import org.easydarwin.bus.StreamStat;
 import org.easydarwin.easyrtmp.push.EasyRTMP;
 import org.easydarwin.push.EasyPusher;
@@ -71,8 +73,25 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
     static Intent mResultIntent;
     static int mResultCode;
     private UpdateMgr update;
+    TextView textRecordTick;
     private BackgroundCameraService mService;
     private ServiceConnection conn;
+    private Runnable mRecordTickRunnable = new Runnable() {
+        @Override
+        public void run() {
+            long duration = System.currentTimeMillis() - EasyApplication.getEasyApplication().mRecordingBegin;
+            duration /= 1000;
+            textRecordTick.setText(String.format("%02d:%02d", duration / 60, (duration) % 60));
+            if (duration % 2 == 0) {
+                textRecordTick.setCompoundDrawablesWithIntrinsicBounds(R.drawable.recording_marker_shape, 0, 0, 0);
+            } else {
+                textRecordTick.setCompoundDrawablesWithIntrinsicBounds(R.drawable.recording_marker_interval_shape, 0, 0, 0);
+            }
+
+            textRecordTick.removeCallbacks(this);
+            textRecordTick.postDelayed(this ,1000);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +109,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
         btnSwitchCemera = (ImageButton) findViewById(R.id.btn_switchCamera);
         btnSwitchCemera.setOnClickListener(this);
         txtStreamAddress = (TextView) findViewById(R.id.txt_stream_address);
+        textRecordTick = (TextView) findViewById(R.id.tv_start_record);
         TextureView surfaceView = (TextureView) findViewById(R.id.sv_surfaceview);
         surfaceView.setSurfaceTextureListener(this);
 
@@ -131,14 +151,12 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
 
         BUS.register(this);
         String url = "http://www.easydarwin.org/versions/easypusher/version.txt";
-        if (EasyApplication.isRTMP())
-        {
+        if (EasyApplication.isRTMP()) {
             url = "http://www.easydarwin.org/versions/easyrtmp/version.txt";
         }
 
         update = new UpdateMgr(this);
         update.checkUpdate(url);
-
 
 
         // create background service for background use.
@@ -168,6 +186,42 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
 //            mMediaStream.startPreview();
 //            return;
 //        }
+
+        if (EasyApplication.getEasyApplication().mRecording){
+            textRecordTick.setVisibility(View.VISIBLE);
+
+            textRecordTick.removeCallbacks(mRecordTickRunnable);
+            textRecordTick.post(mRecordTickRunnable);
+        }else{
+            textRecordTick.setVisibility(View.GONE);
+            textRecordTick.removeCallbacks(mRecordTickRunnable);
+        }
+    }
+
+    @Subscribe
+    public void onStartRecord(StartRecord sr) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                textRecordTick.setVisibility(View.VISIBLE);
+
+                textRecordTick.removeCallbacks(mRecordTickRunnable);
+                textRecordTick.post(mRecordTickRunnable);
+            }
+        });
+    }
+
+    @Subscribe
+    public void onStopRecord(StopRecord sr) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                textRecordTick.setVisibility(View.GONE);
+                textRecordTick.removeCallbacks(mRecordTickRunnable);
+            }
+        });
     }
 
 
@@ -446,7 +500,6 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                 }
                 break;
             case R.id.btn_switchCamera: {
-                mMediaStream.setDgree(getDgree());
                 mMediaStream.switchCamera();
             }
             break;
@@ -538,7 +591,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                 String port = EasyApplication.getEasyApplication().getPort();
                 String id = EasyApplication.getEasyApplication().getId();
                 String url = String.format("rtsp://%s:%s/%s.sdp", ip, port, id);
-                if (EasyApplication.isRTMP()){
+                if (EasyApplication.isRTMP()) {
                     url = EasyApplication.getEasyApplication().getUrl();
                 }
                 btnSwitch.setText("停止");
@@ -576,7 +629,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
 
                 stopService(new Intent(this, BackgroundCameraService.class));
             }
-        }else {
+        } else {
             if (isStreaming) {
                 // active background streaming
                 mService.activePreview();

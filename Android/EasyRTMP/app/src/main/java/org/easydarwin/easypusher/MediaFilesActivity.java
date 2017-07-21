@@ -171,7 +171,7 @@ public class MediaFilesActivity extends AppCompatActivity {
 
             mShowMp4File = getArguments().getBoolean(KEY_IS_RECORD);
             mSuffix = mShowMp4File ? ".mp4" : ".jpg";
-            File easyPusher = new File(Environment.getExternalStorageDirectory() + "/EasyPusher");
+            File easyPusher = new File(Environment.getExternalStorageDirectory() + (EasyApplication.isRTMP()?"/EasyRTMP":"/EasyPusher"));
             easyPusher.mkdir();
             mRoot = easyPusher;
             File[] subFiles = mRoot.listFiles(new FilenameFilter() {

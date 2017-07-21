@@ -6,7 +6,10 @@ import android.media.MediaMuxer;
 import android.os.Build;
 import android.util.Log;
 
+import org.easydarwin.bus.StartRecord;
+import org.easydarwin.bus.StopRecord;
 import org.easydarwin.easypusher.BuildConfig;
+import org.easydarwin.easypusher.EasyApplication;
 import org.easydarwin.push.EasyPusher;
 
 import java.io.File;
@@ -43,6 +46,7 @@ public class EasyMuxer {
             e.printStackTrace();
         } finally {
             mMuxer = (MediaMuxer) mux;
+            EasyApplication.BUS.post(new StartRecord());
         }
     }
 
@@ -140,6 +144,7 @@ public class EasyMuxer {
                         new File(mFilePath + "-" + index + ".mp4").delete();
                     }
                     mAudioTrackIndex = mVideoTrackIndex = -1;
+                    EasyApplication.BUS.post(new StopRecord());
                 }
             }
         }
