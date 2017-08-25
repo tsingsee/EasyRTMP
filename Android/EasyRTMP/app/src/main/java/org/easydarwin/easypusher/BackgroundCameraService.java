@@ -1,7 +1,7 @@
 package org.easydarwin.easypusher;
 
 import android.app.Notification;
-import android.app.PendingIntent;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -18,6 +18,8 @@ import android.view.WindowManager;
 import org.easydarwin.push.MediaStream;
 
 public class BackgroundCameraService extends Service implements TextureView.SurfaceTextureListener {
+    private static final int NOTIFICATION_ID = 1;
+
     private static final String TAG = BackgroundCameraService.class.getSimpleName();
     public static final String EXTRA_RR = "extra_rr";
     /**
@@ -71,6 +73,7 @@ public class BackgroundCameraService extends Service implements TextureView.Surf
     public void activePreview() {
         mMediaStream.stopPreview();
         if (mTexture != null){
+            backGroundNotificate();
             mMediaStream.setSurfaceTexture(mTexture);
             mMediaStream.startPreview();
         }else{
@@ -98,27 +101,10 @@ public class BackgroundCameraService extends Service implements TextureView.Surf
     public void onCreate() {
         super.onCreate();
 
-        // Start foreground service to avoid unexpected kill
-        Notification notification = null;
-
-        Intent i = new Intent(this, StreamActivity.class);
-        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, i, 0);
-
-        i = new Intent(this, BackgroundCameraService.class);
-        PendingIntent deleteIntent = PendingIntent.getService(this, 0, i, 0);
-
-        notification = new NotificationCompat.Builder(this).setContentTitle("后台采集视频中").setAutoCancel(true)
-                .setDeleteIntent(deleteIntent).setContentIntent(contentIntent).build();
-
-//        notification = new NotificationCompat.Builder(this).setContentText()
-        startForeground(1234, notification);
-
         // Create new SurfaceView, set its size to 1x1, move it to the top left
         // corner and set this service as a callback
         mWindowManager = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
         mOutComeVideoView = new TextureView(this);
-
 
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams(1, 1, WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
                 WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, PixelFormat.TRANSLUCENT);
@@ -134,9 +120,22 @@ public class BackgroundCameraService extends Service implements TextureView.Surf
             return START_NOT_STICKY;
         }
 
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.cancel(NOTIFICATION_ID);
+
         return super.onStartCommand(intent, flags, startId);
     }
 
+    public void backGroundNotificate()
+    {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(EasyApplication.getEasyApplication());
+        builder.setSmallIcon(R.mipmap.ic_launcher);
+        builder.setContentTitle("EasyRTMP");
+        builder.setContentText("后台采集视频中");
+        Notification notification = builder.build();
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.notify(NOTIFICATION_ID, notification);
+    }
 
     @Override
     public void onDestroy() {

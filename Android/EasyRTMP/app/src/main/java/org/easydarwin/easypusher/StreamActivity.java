@@ -12,7 +12,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
-import android.media.Image;
 import android.media.projection.MediaProjectionManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -360,8 +359,6 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                 txtStreamAddress.setText(String.format("rtsp://%s:%s/%s.sdp", ip, port, id));
             }
         }
-
-        initSpninner();
     }
 
     private int getDgree() {
@@ -516,7 +513,6 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
         });
     }
 
-
     @Override
     protected void onDestroy() {
         BUS.unregister(this);
@@ -606,6 +602,8 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
             startCamera();
             mService.setMediaStream(ms);
         }
+
+        initSpninner();
     }
 
     @Override
