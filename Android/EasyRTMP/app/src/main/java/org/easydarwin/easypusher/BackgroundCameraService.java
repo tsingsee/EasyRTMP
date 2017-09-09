@@ -146,6 +146,16 @@ public class BackgroundCameraService extends Service implements TextureView.Surf
         return super.onStartCommand(intent, flags, startId);
     }
 
+    public void backGroundNotificate()
+    {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(EasyApplication.getEasyApplication());
+        builder.setSmallIcon(R.mipmap.ic_launcher);
+        builder.setContentTitle(this.getString(R.string.app_name));
+        builder.setContentText("后台采集视频中");
+        Notification notification = builder.build();
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.notify(NOTIFICATION_ID, notification);
+    }
 
     @Override
     public void onDestroy() {

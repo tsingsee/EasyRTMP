@@ -12,7 +12,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
-import android.media.Image;
 import android.media.projection.MediaProjectionManager;
 import android.os.Build;
 import android.os.Bundle;

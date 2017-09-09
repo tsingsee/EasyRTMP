@@ -26,7 +26,7 @@
 #include "hi_net_dev_errors.h"
 
 
-char* SRTMP             = "rtmp://121.40.50.44/live/kim2";//Default Push StreamName
+char* SRTMP             = "rtmp://www.easydss.com:10085/hls/easyrtmpsdktestxxx";//Default Push StreamName
 char* ConfigUName	= "admin";			//SDK UserName
 char* ConfigPWD		= "admin";			//SDK Password
 char* ConfigDHost	= "127.0.0.1";	//SDK Host
