@@ -21,6 +21,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -41,6 +42,7 @@ import com.squareup.otto.Subscribe;
 import org.easydarwin.bus.StartRecord;
 import org.easydarwin.bus.StopRecord;
 import org.easydarwin.bus.StreamStat;
+import org.easydarwin.bus.SupportResolution;
 import org.easydarwin.easyrtmp.push.EasyRTMP;
 import org.easydarwin.push.EasyPusher;
 import org.easydarwin.push.InitCallback;
@@ -51,6 +53,7 @@ import org.easydarwin.util.Util;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.jar.Manifest;
 
 import static org.easydarwin.easypusher.EasyApplication.BUS;
 import static org.easydarwin.update.UpdateMgr.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE;
@@ -59,6 +62,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
 
     static final String TAG = "EasyPusher";
     public static final int REQUEST_MEDIA_PROJECTION = 1002;
+    public static final int REQUEST_CAMERA_PERMISSION = 1003;
 
     //默认分辨率
     int width = 640, height = 480;
@@ -67,7 +71,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
     TextView txtStreamAddress;
     ImageButton btnSwitchCemera;
     Spinner spnResolution;
-    List<String> listResolution;
+    List<String> listResolution = new ArrayList<String>();
     MediaStream mMediaStream;
     TextView txtStatus, streamStat;
     static Intent mResultIntent;
@@ -89,15 +93,29 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
             }
 
             textRecordTick.removeCallbacks(this);
-            textRecordTick.postDelayed(this ,1000);
+            textRecordTick.postDelayed(this, 1000);
         }
     };
+    private boolean mNeedGrantedPermission;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        BUS.register(this);
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(this, android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA,android.Manifest.permission.RECORD_AUDIO}, REQUEST_CAMERA_PERMISSION);
+            mNeedGrantedPermission = true;
+            return;
+        } else {
+            // resume..
+        }
+    }
+
+
+    private void goonWithPermissionGranted() {
         spnResolution = (Spinner) findViewById(R.id.spn_resolution);
         streamStat = (TextView) findViewById(R.id.stream_stat);
         streamStat.setText(null);
@@ -110,20 +128,11 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
         btnSwitchCemera.setOnClickListener(this);
         txtStreamAddress = (TextView) findViewById(R.id.txt_stream_address);
         textRecordTick = (TextView) findViewById(R.id.tv_start_record);
-        TextureView surfaceView = (TextureView) findViewById(R.id.sv_surfaceview);
+        final TextureView surfaceView = (TextureView) findViewById(R.id.sv_surfaceview);
         surfaceView.setSurfaceTextureListener(this);
 
         surfaceView.setOnClickListener(this);
 
-        listResolution = new ArrayList<String>();
-        listResolution = Util.getSupportResolution(this);
-        boolean supportdefault = listResolution.contains(String.format("%dx%d", width, height));
-        if (!supportdefault) {
-            String r = listResolution.get(0);
-            String[] splitR = r.split("x");
-            width = Integer.parseInt(splitR[0]);
-            height = Integer.parseInt(splitR[1]);
-        }
 
         Button pushScreen = (Button) findViewById(R.id.push_screen);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
@@ -149,7 +158,6 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
             findViewById(R.id.toolbar_about).setVisibility(View.GONE);
         }
 
-        BUS.register(this);
         String url = "http://www.easydarwin.org/versions/easypusher/version.txt";
         if (EasyApplication.isRTMP()) {
             url = "http://www.easydarwin.org/versions/easyrtmp/version.txt";
@@ -169,6 +177,9 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                 mService = ((BackgroundCameraService.LocalBinder) iBinder).getService();
 //                mMediaStream = EasyApplication.sMS;
 
+                if (surfaceView.isAvailable()) {
+                    goonWithAvailableTexture(surfaceView.getSurfaceTexture());
+                }
 
             }
 
@@ -187,15 +198,16 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
 //            return;
 //        }
 
-        if (EasyApplication.getEasyApplication().mRecording){
+        if (EasyApplication.getEasyApplication().mRecording) {
             textRecordTick.setVisibility(View.VISIBLE);
 
             textRecordTick.removeCallbacks(mRecordTickRunnable);
             textRecordTick.post(mRecordTickRunnable);
-        }else{
+        } else {
             textRecordTick.setVisibility(View.GONE);
             textRecordTick.removeCallbacks(mRecordTickRunnable);
         }
+
     }
 
     @Subscribe
@@ -235,8 +247,21 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     update.doDownload();
                 }
+                break;
+            case REQUEST_CAMERA_PERMISSION: {
+                if (grantResults.length > 1
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED&& grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    mNeedGrantedPermission = false;
+                    goonWithPermissionGranted();
+
+                } else {
+                    finish();
+                }
+                break;
+            }
         }
     }
+
 
     private void startScreenPushIntent() {
         if (StreamActivity.mResultIntent != null && StreamActivity.mResultCode != 0) {
@@ -327,11 +352,16 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String r = listResolution.get(position);
                 String[] splitR = r.split("x");
-                width = Integer.parseInt(splitR[0]);
-                height = Integer.parseInt(splitR[1]);
-                if (mMediaStream != null) {
-                    mMediaStream.updateResolution(width, height);
-                    mMediaStream.reStartStream();
+
+                int wh = Integer.parseInt(splitR[0]);
+                int ht = Integer.parseInt(splitR[1]);
+                if (width != wh || height != ht) {
+                    width = wh;
+                    height = ht;
+                    if (mMediaStream != null) {
+                        mMediaStream.updateResolution(width, height);
+                        mMediaStream.reStartStream();
+                    }
                 }
             }
 
@@ -360,8 +390,6 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                 txtStreamAddress.setText(String.format("rtsp://%s:%s/%s.sdp", ip, port, id));
             }
         }
-
-        initSpninner();
     }
 
     private int getDgree() {
@@ -516,13 +544,27 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
         });
     }
 
+    @Subscribe
+    public void onSupportResolution(SupportResolution resolution) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                listResolution = Util.getSupportResolution(getApplicationContext());
+                boolean supportdefault = listResolution.contains(String.format("%dx%d", width, height));
+                if (!supportdefault) {
+                    String r = listResolution.get(0);
+                    String[] splitR = r.split("x");
+                    width = Integer.parseInt(splitR[0]);
+                    height = Integer.parseInt(splitR[1]);
+                }initSpninner();
+            }
+        });
+    }
 
     @Override
     protected void onDestroy() {
         BUS.unregister(this);
-        unbindService(conn);
         super.onDestroy();
-        handler.removeCallbacksAndMessages(null);
     }
 
     @Override
@@ -554,7 +596,6 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                 public void onClick(DialogInterface dialogInterface, int i) {
                     PreferenceManager.getDefaultSharedPreferences(StreamActivity.this).edit().putBoolean("background_camera_alert", true).apply();
                     StreamActivity.super.onBackPressed();
-                    Toast.makeText(StreamActivity.this, "正在后台采集并上传。", Toast.LENGTH_SHORT).show();
                 }
             }).setPositiveButton("退出程序", new DialogInterface.OnClickListener() {
                 @Override
@@ -576,12 +617,19 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onSurfaceTextureAvailable(final SurfaceTexture surface, int width, int height) {
+        if (mService != null) {
+            goonWithAvailableTexture(surface);
+        }
+    }
+
+    private void goonWithAvailableTexture(SurfaceTexture surface) {
         final File easyPusher = new File(Environment.getExternalStorageDirectory() + (EasyApplication.isRTMP() ? "/EasyRTMP"
                 : "/EasyPusher"));
         easyPusher.mkdir();
         MediaStream ms = mService.getMediaStream();
         if (ms != null) {    // switch from background to front
             ms.stopPreview();
+            mService.inActivePreview();
             ms.setSurfaceTexture(surface);
             ms.startPreview();
             mMediaStream = ms;
@@ -606,6 +654,8 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
             startCamera();
             mService.setMediaStream(ms);
         }
+
+        initSpninner();
     }
 
     @Override
@@ -615,32 +665,45 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-        boolean isStreaming = mMediaStream != null && mMediaStream.isStreaming();
-        mMediaStream.stopPreview();
-        if (isFinishing()) {
-            if (isStreaming && PreferenceManager.getDefaultSharedPreferences(StreamActivity.this)
-                    .getBoolean("key_enable_background_camera", true)) {
-                // active background streaming
-                mService.activePreview();
-            } else {
-                mMediaStream.stopStream();
-                mMediaStream.release();
-                mMediaStream = null;
-
-                stopService(new Intent(this, BackgroundCameraService.class));
-            }
-        } else {
-            if (isStreaming) {
-                // active background streaming
-                mService.activePreview();
-            }
-        }
         return true;
     }
 
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
 
+    }
+
+
+    @Override
+    protected void onPause() {
+        if (!mNeedGrantedPermission) {
+            unbindService(conn);
+            handler.removeCallbacksAndMessages(null);
+        }
+        boolean isStreaming = mMediaStream != null && mMediaStream.isStreaming();
+        mMediaStream.stopPreview();
+        if (isStreaming && PreferenceManager.getDefaultSharedPreferences(StreamActivity.this)
+                .getBoolean("key_enable_background_camera", true)) {
+            // active background streaming
+
+            Toast.makeText(StreamActivity.this, "正在后台采集并上传。", Toast.LENGTH_SHORT).show();
+            mService.activePreview();
+        } else {
+            mMediaStream.stopStream();
+            mMediaStream.release();
+            mMediaStream = null;
+
+            stopService(new Intent(this, BackgroundCameraService.class));
+        }
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!mNeedGrantedPermission){
+            goonWithPermissionGranted();
+        }
     }
 
     public void onRecord(View view) {

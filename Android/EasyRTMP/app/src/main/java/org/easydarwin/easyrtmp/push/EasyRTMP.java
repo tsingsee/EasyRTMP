@@ -74,7 +74,9 @@ public class EasyRTMP implements Pusher {
 
     public synchronized void stop() {
         if (mPusherObj == 0) return;
+        Log.d(TAG, "stopPush begin");
         stopPush(mPusherObj);
+        Log.d(TAG, "stopPush end");
         mPusherObj = 0;
     }
 
@@ -92,6 +94,7 @@ public class EasyRTMP implements Pusher {
         /*
         *本Key为3个月临时授权License，如需商业使用，请邮件至support@easydarwin.org申请此产品的授权。
         */
+        Log.d(TAG, "startpush begin");
         mPusherObj = init(url, RTMP_KEY, context, new OnInitPusherCallback() {
             int code = Integer.MAX_VALUE;
             @Override
@@ -103,6 +106,7 @@ public class EasyRTMP implements Pusher {
             }
         },
         fps);
+        Log.d(TAG, "startpush end");
     }
 
     public void push(byte[] data, long timestamp, int type){

@@ -39,17 +39,6 @@ public class EasyApplication extends Application {
         mApplication = this;
         // for compatibility
         resetDefaultServer();
-        if (Util.getSupportResolution(this).size() == 0) {
-            StringBuilder stringBuilder = new StringBuilder();
-            Camera camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
-            List<Camera.Size> supportedPreviewSizes = camera.getParameters().getSupportedPreviewSizes();
-            for (Camera.Size str : supportedPreviewSizes) {
-                stringBuilder.append(str.width + "x" + str.height).append(";");
-            }
-            Util.saveSupportResolution(this, stringBuilder.toString());
-            camera.release();
-        }
-
         File youyuan = getFileStreamPath("SIMYOU.ttf");
         if (!youyuan.exists()){
             AssetManager am = getAssets();
