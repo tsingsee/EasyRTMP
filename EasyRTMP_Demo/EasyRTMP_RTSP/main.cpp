@@ -288,7 +288,7 @@ int main(int argc, char * argv[])
 	
 	EasyRTSP_SetCallback(fNVSHandle, __RTSPSourceCallBack);
 
-	EasyRTSP_OpenStream(fNVSHandle, 0, RTSPURL, EASY_RTP_OVER_TCP, mediaType, 0, 0, NULL, 1000, 0, 1, 3);
+	EasyRTSP_OpenStream(fNVSHandle, 0, RTSPURL, EASY_RTP_OVER_TCP, mediaType, 0, 0, NULL, 1000, 0, 0, 3);
 
 	getchar();
 
