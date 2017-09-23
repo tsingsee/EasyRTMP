@@ -8,8 +8,8 @@ android {
         applicationId "org.easydarwin.easyrtmp"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 16
-        versionName "1.3.17.0721"
+        versionCode 19
+        versionName "1.3.17.0923"
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
     }
     buildTypes {
@@ -21,17 +21,16 @@ android {
     dataBinding {
         enabled = true
     }
+    flavorDimensions 'prod'
     productFlavors {
         rtmp {
+            dimension 'prod'
             applicationId "org.easydarwin.easyrtmp"
             if (project.hasProperty('RTMP_KEY'))
             {
                 buildConfigField 'String', 'RTMP_KEY', RTMP_KEY
             }else{
-                /*
-                *本Key为3个月临时授权License，如需商业使用，请邮件至support@easydarwin.org申请此产品的授权。
-                */
-                buildConfigField 'String', 'RTMP_KEY', "\"79397037795A36526D3432415A344A5A706E3258792B6876636D63755A57467A65575268636E64706269356C59584E35636E52746346634D5671442F532B424859585A7062695A4359574A76633246414D6A41784E6B566863336C4559584A33615735555A5746745A57467A65513D3D\""
+                buildConfigField 'String', 'RTMP_KEY', "\"79397037795A36526D3430417271413478313871384F6876636D63755A57467A65575268636E64706269356C59584E35636E52746346634D56714459384F424859585A7062695A4359574A76633246414D6A41784E6B566863336C4559584A33615735555A5746745A57467A65513D3D\""
             }
             if (project.hasProperty('RTSP_KEY'))
             {
@@ -46,8 +45,8 @@ android {
     }
 
     android.applicationVariants.all { variant ->
-        def file = variant.outputs[0].outputFile
-        variant.outputs[0].outputFile = new File(file.parent, file.name.replace(".apk", "-" + defaultConfig.versionCode + "-" + defaultConfig.versionName+".apk"))
+//        def file = variant.outputs[0].outputFile
+//        variant.outputs[0].outputFile = new File(file.parent, file.name.replace(".apk", "-" + defaultConfig.versionCode + "-" + defaultConfig.versionName+".apk"))
     }
 }
 

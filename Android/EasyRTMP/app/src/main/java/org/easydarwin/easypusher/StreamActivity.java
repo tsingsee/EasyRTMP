@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
+import android.media.Image;
 import android.media.projection.MediaProjectionManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -349,6 +350,12 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
         spnResolution.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (mMediaStream != null && mMediaStream.isStreaming()){
+                    int pos = listResolution.indexOf(String.format("%dx%d", width, height));
+                    spnResolution.setSelection(pos, false);
+                    Toast.makeText(StreamActivity.this,"正在推送中,无法切换分辨率",Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 String r = listResolution.get(position);
                 String[] splitR = r.split("x");
 
@@ -359,7 +366,6 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                     height = ht;
                     if (mMediaStream != null) {
                         mMediaStream.updateResolution(width, height);
-                        mMediaStream.reStartStream();
                     }
                 }
             }
@@ -716,5 +722,9 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                 ib.setImageResource(R.drawable.ic_action_recording);
             }
         }
+    }
+
+    public void onClickResolution(View view) {
+        findViewById(R.id.spn_resolution).performClick();
     }
 }
