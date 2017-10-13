@@ -7,15 +7,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="0dp"
-            android:background="@color/colorPrimary"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent" />
-
         <TextView
             android:text="EasyPlayer RTSP是由EasyDarwin开源团队开发 者开发和维护的一个RTSP播放器项目，目前 支持Windows/Android/iOS，视频支持 H.264/H.265/MPEG4/MJPEG，音频支持 G711A/G711U/G726/AAC，支持RTSP over  TCP/UDP切换，支持硬解码，是一套极佳的 RTSP播放组件！项目地址： https://github.com/EasyDarwin/EasyPlayer  您也可以升级到我们的EasyPlayer Pro全功能版 本，支持HTTP/RTSP/RTMP/HLS等多种流媒体协议！扫描如下的下载："
             android:layout_width="0dp"
@@ -105,6 +96,32 @@
             app:layout_constraintRight_toRightOf="parent"
             android:layout_marginRight="16dp"
             android:layout_width="0dp" />
+
+
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            android:id="@+id/server_title"
+            android:layout_marginRight="16dp"
+            android:text="-EasyDSS RTMP流媒体服务器：\nhttp://www.easydss.com"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:id="@+id/player_title"
+            android:visibility="gone"
+            android:layout_marginRight="16dp"
+            android:text="-EasyPlayerPro全功能播放器：\nhttps://github.com/EasyDSS/EasyPlayerPro"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/server_title" />
 
     </android.support.constraint.ConstraintLayout>
 </layout>

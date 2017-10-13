@@ -109,11 +109,7 @@ public class SettingActivity extends AppCompatActivity {
         });
 
         TextView versionCode = (TextView) findViewById(R.id.txt_version);
-        try {
-            versionCode.setText("版本:" + getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
+        versionCode.setText("关于" + getString(R.string.app_name) );
 
 
         CheckBox enable_video_overlay = (CheckBox) findViewById(R.id.enable_video_overlay);
@@ -143,5 +139,10 @@ public class SettingActivity extends AppCompatActivity {
 
     public void onOpenLocalRecord(View view) {
         startActivity(new Intent(this, MediaFilesActivity.class));
+    }
+
+    public void onAbut(View view) {
+
+        startActivity(new Intent(this, AboutActivity.class));
     }
 }
