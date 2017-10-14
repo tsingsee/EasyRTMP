@@ -7,12 +7,18 @@
 
 package org.easydarwin.easypusher;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -26,6 +32,9 @@ import org.easydarwin.config.Config;
 public class SettingActivity extends AppCompatActivity {
 
     private static final boolean TEST_ = true;
+
+    public static final int REQUEST_OVERLAY_PERMISSION = 1004;
+    public static final String KEY_ENABLE_BACKGROUND_CAMERA = "key_enable_background_camera";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,12 +97,37 @@ public class SettingActivity extends AppCompatActivity {
 
 
         CheckBox backgroundPushing = (CheckBox) findViewById(R.id.enable_background_camera_pushing);
-        backgroundPushing.setChecked(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("key_enable_background_camera", true));
+        backgroundPushing.setChecked(PreferenceManager.getDefaultSharedPreferences(this).getBoolean(KEY_ENABLE_BACKGROUND_CAMERA, false));
 
         backgroundPushing.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                PreferenceManager.getDefaultSharedPreferences(SettingActivity.this).edit().putBoolean("key_enable_background_camera", isChecked).apply();
+            public void onCheckedChanged(final CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            if (!Settings.canDrawOverlays(SettingActivity.this)) {
+
+                                new AlertDialog.Builder(SettingActivity.this).setTitle("后台上传视频").setMessage("后台上传视频需要APP出现在顶部.是否确定?").setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                                        final Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + BuildConfig.APPLICATION_ID));
+                                        startActivityForResult(intent, REQUEST_OVERLAY_PERMISSION);
+                                    }
+                                }).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        PreferenceManager.getDefaultSharedPreferences(SettingActivity.this).edit()
+                                                .putBoolean(KEY_ENABLE_BACKGROUND_CAMERA, false).apply();
+                                        buttonView.toggle();
+                                    }
+                                }).setCancelable(false).show();
+                            }
+                        }else {
+                            PreferenceManager.getDefaultSharedPreferences(SettingActivity.this).edit().putBoolean(KEY_ENABLE_BACKGROUND_CAMERA, true).apply();
+                        }
+                }else {
+                    PreferenceManager.getDefaultSharedPreferences(SettingActivity.this).edit().putBoolean(KEY_ENABLE_BACKGROUND_CAMERA, false).apply();
+                }
             }
         });
 
@@ -144,5 +178,22 @@ public class SettingActivity extends AppCompatActivity {
     public void onAbut(View view) {
 
         startActivity(new Intent(this, AboutActivity.class));
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_OVERLAY_PERMISSION) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                boolean canDraw = Settings.canDrawOverlays(this);
+                PreferenceManager.getDefaultSharedPreferences(SettingActivity.this).edit()
+                        .putBoolean(KEY_ENABLE_BACKGROUND_CAMERA, canDraw).apply();
+                if (!canDraw){
+                    CheckBox backgroundPushing = (CheckBox) findViewById(R.id.enable_background_camera_pushing);
+                    backgroundPushing.setChecked(false);
+                }
+            }
+        }
     }
 }

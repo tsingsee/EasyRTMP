@@ -14,6 +14,7 @@ import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
 import android.media.Image;
 import android.media.projection.MediaProjectionManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -21,6 +22,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -106,7 +108,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
         BUS.register(this);
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
                 ActivityCompat.checkSelfPermission(this, android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA,android.Manifest.permission.RECORD_AUDIO}, REQUEST_CAMERA_PERMISSION);
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA, android.Manifest.permission.RECORD_AUDIO}, REQUEST_CAMERA_PERMISSION);
             mNeedGrantedPermission = true;
             return;
         } else {
@@ -250,7 +252,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                 break;
             case REQUEST_CAMERA_PERMISSION: {
                 if (grantResults.length > 1
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED&& grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     mNeedGrantedPermission = false;
                     goonWithPermissionGranted();
 
@@ -350,10 +352,11 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
         spnResolution.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (mMediaStream != null && mMediaStream.isStreaming()){
+                if (mMediaStream != null && mMediaStream.isStreaming()) {
                     int pos = listResolution.indexOf(String.format("%dx%d", width, height));
+                    if (pos == position) return;
                     spnResolution.setSelection(pos, false);
-                    Toast.makeText(StreamActivity.this,"正在推送中,无法切换分辨率",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(StreamActivity.this, "正在推送中,无法切换分辨率", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 String r = listResolution.get(position);
@@ -561,7 +564,8 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                     String[] splitR = r.split("x");
                     width = Integer.parseInt(splitR[0]);
                     height = Integer.parseInt(splitR[1]);
-                }initSpninner();
+                }
+                initSpninner();
             }
         });
     }
@@ -595,8 +599,10 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onBackPressed() {
         boolean isStreaming = mMediaStream != null && mMediaStream.isStreaming();
-        if (isStreaming && PreferenceManager.getDefaultSharedPreferences(this).getBoolean("key_enable_background_camera", true)) {
-            new AlertDialog.Builder(this).setTitle("是否允许后台上传？").setMessage("您设置了使能摄像头后台采集,是否继续在后台采集并上传视频？如果是，记得直播结束后,再回来这里关闭直播。").setNeutralButton("后台采集", new DialogInterface.OnClickListener() {
+        if (isStreaming && PreferenceManager.getDefaultSharedPreferences(this).getBoolean(SettingActivity.KEY_ENABLE_BACKGROUND_CAMERA, false)) {
+            new AlertDialog.Builder(this).setTitle("是否允许后台上传？")
+                    .setMessage("您设置了使能摄像头后台采集,是否继续在后台采集并上传视频？如果是，记得直播结束后,再回来这里关闭直播。")
+                    .setNeutralButton("后台采集", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     PreferenceManager.getDefaultSharedPreferences(StreamActivity.this).edit().putBoolean("background_camera_alert", true).apply();
@@ -659,8 +665,6 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
             startCamera();
             mService.setMediaStream(ms);
         }
-
-        initSpninner();
     }
 
     @Override
@@ -686,27 +690,27 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
             handler.removeCallbacksAndMessages(null);
         }
         boolean isStreaming = mMediaStream != null && mMediaStream.isStreaming();
-        mMediaStream.stopPreview();
-        if (isStreaming && PreferenceManager.getDefaultSharedPreferences(StreamActivity.this)
-                .getBoolean("key_enable_background_camera", true)) {
-            // active background streaming
+        if (mMediaStream != null) {
+            mMediaStream.stopPreview();
+            if (isStreaming && PreferenceManager.getDefaultSharedPreferences(StreamActivity.this)
+                    .getBoolean(SettingActivity.KEY_ENABLE_BACKGROUND_CAMERA, false)) {
+                mService.activePreview();
+            } else {
+                mMediaStream.stopStream();
+                mMediaStream.release();
+                mMediaStream = null;
 
-            Toast.makeText(StreamActivity.this, "正在后台采集并上传。", Toast.LENGTH_SHORT).show();
-            mService.activePreview();
-        } else {
-            mMediaStream.stopStream();
-            mMediaStream.release();
-            mMediaStream = null;
-
-            stopService(new Intent(this, BackgroundCameraService.class));
+                stopService(new Intent(this, BackgroundCameraService.class));
+            }
         }
+
         super.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (!mNeedGrantedPermission){
+        if (!mNeedGrantedPermission) {
             goonWithPermissionGranted();
         }
     }

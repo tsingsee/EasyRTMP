@@ -6,12 +6,17 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.graphics.SurfaceTexture;
+import android.net.Uri;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
+import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
+import android.support.v7.app.AlertDialog;
 import android.view.Gravity;
 import android.view.TextureView;
 import android.view.WindowManager;
@@ -44,6 +49,7 @@ public class BackgroundCameraService extends Service implements TextureView.Surf
         if (mPenddingStartPreview){
             mMediaStream.setSurfaceTexture(mTexture);
             mMediaStream.startPreview();
+            backGroundNotificate();
         }
     }
 
@@ -73,14 +79,23 @@ public class BackgroundCameraService extends Service implements TextureView.Surf
 
     public void activePreview() {
         mMediaStream.stopPreview();
-        if (mTexture != null){
-            backGroundNotificate();
-            mMediaStream.setSurfaceTexture(mTexture);
-            mMediaStream.startPreview();
+        mPenddingStartPreview = true;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (Settings.canDrawOverlays(this)) {
+                WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams(1, 1, WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
+                        WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, PixelFormat.TRANSLUCENT);
+                layoutParams.gravity = Gravity.LEFT | Gravity.TOP;
+                mWindowManager.addView(mOutComeVideoView, layoutParams);
+            }
         }else{
-            mPenddingStartPreview = true;
+            WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams(1, 1, WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
+                    WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, PixelFormat.TRANSLUCENT);
+            layoutParams.gravity = Gravity.LEFT | Gravity.TOP;
+            mWindowManager.addView(mOutComeVideoView, layoutParams);
         }
     }
+
 
     private void backGroundNotificate() {
 
@@ -92,14 +107,20 @@ public class BackgroundCameraService extends Service implements TextureView.Surf
                 new Notification.Builder(this)
                         .setContentTitle(getString(R.string.app_name))
                         .setContentText("后台采集视频中")
-                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setSmallIcon(R.drawable.ic_stat_camera)
                         .setContentIntent(pendingIntent)
                         .build();
 
         startForeground(NOTIFICATION_ID, notification);
     }
 
+
     public void inActivePreview() {
+        if (mOutComeVideoView != null) {
+            if (mOutComeVideoView.getParent() != null) {
+                mWindowManager.removeView(mOutComeVideoView);
+            }
+        }
         stopForeground(true);
     }
 
@@ -128,12 +149,7 @@ public class BackgroundCameraService extends Service implements TextureView.Surf
         mWindowManager = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
         mOutComeVideoView = new TextureView(this);
 
-        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams(1, 1, WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
-                WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, PixelFormat.TRANSLUCENT);
-        layoutParams.gravity = Gravity.LEFT | Gravity.TOP;
-        mWindowManager.addView(mOutComeVideoView, layoutParams);
         mOutComeVideoView.setSurfaceTextureListener(this);
-
 
     }
 
