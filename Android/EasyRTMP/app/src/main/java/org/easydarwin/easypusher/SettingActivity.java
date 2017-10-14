@@ -65,10 +65,10 @@ public class SettingActivity extends AppCompatActivity {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String ipValue = txtIp.getText().toString();
-                String portValue = txtPort.getText().toString();
-                String idValue = txtId.getText().toString();
-                String url = rtmpUrl.getText().toString();
+                String ipValue = txtIp.getText().toString().trim();
+                String portValue = txtPort.getText().toString().trim();
+                String idValue = txtId.getText().toString().trim();
+                String url = rtmpUrl.getText().toString().trim();
 
                 if (TextUtils.isEmpty(ipValue)) {
                     ipValue = Config.DEFAULT_SERVER_IP;

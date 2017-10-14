@@ -175,7 +175,7 @@
                 android:id="@+id/textView3"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/android_player_pro_title"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="8dp"
                 android:layout_marginStart="16dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 android:layout_marginLeft="16dp"
