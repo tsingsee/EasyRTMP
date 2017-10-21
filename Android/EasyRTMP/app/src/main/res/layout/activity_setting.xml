@@ -96,16 +96,6 @@
         android:layout_height="wrap_content"
         android:onClick="onOpenLocalRecord"
         android:text="打开录像文件夹"/>
-    <Button
-        android:id="@+id/txt_version"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="5dp"
-        android:onClick="onAbut"
-        android:paddingRight="5dp"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:text="关于" />
 
     <Button
         android:id="@+id/btn_save"

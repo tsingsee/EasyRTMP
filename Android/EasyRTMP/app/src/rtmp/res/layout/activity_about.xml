@@ -12,12 +12,23 @@
 
 
             <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="8dp"
+                android:id="@+id/version"
+                android:layout_marginRight="16dp"
+                android:text="EasyRTMP推流组件："
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+            <TextView
                 android:text="EasyRTMP是一套调用简单、功能完善、运行高效稳定的RTMP功能组件，经过多年实战和线上运行打造，支持RTMP推送断线重连、环形缓冲、智能丢帧、网络事件回调，支持Windows、Linux、arm（hisiv100/hisiv200/hisiv300/hisiv400/etc..）、Android、iOS平台，支持市面上绝大部分的RTMP流媒体服务器，能够完美应用于各种行业的直播需求，手机直播、桌面直播、摄像机直播、课堂直播等等方面！\n配套方案推荐："
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/desc"
-                android:layout_marginTop="16dp"
-                app:layout_constraintTop_toBottomOf="@+id/toolbar"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/version"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 android:layout_marginStart="16dp"
@@ -32,7 +43,7 @@
                 android:layout_marginTop="8dp"
                 android:id="@+id/rtmp_title"
                 android:layout_marginRight="16dp"
-                android:text="-EasyRTMP推流组件："
+                android:text="EasyRTMP推流组件："
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/desc" />
@@ -101,7 +112,7 @@
                 android:layout_marginTop="8dp"
                 android:id="@+id/server_title"
                 android:layout_marginRight="16dp"
-                android:text="-EasyDSS RTMP流媒体服务器：\nhttp://www.easydss.com"
+                android:text="EasyDSS RTMP流媒体服务器：\nhttp://www.easydss.com"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/android_rtmp_title" />
@@ -112,7 +123,7 @@
                 android:layout_marginTop="8dp"
                 android:id="@+id/player_title"
                 android:layout_marginRight="16dp"
-                android:text="-EasyPlayerPro全功能播放器：\nhttps://github.com/EasyDSS/EasyPlayerPro"
+                android:text="EasyPlayerPro全功能播放器：\nhttps://github.com/EasyDSS/EasyPlayerPro"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/server_title" />

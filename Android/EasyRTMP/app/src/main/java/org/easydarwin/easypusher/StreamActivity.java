@@ -155,11 +155,6 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
             }
         }
 
-
-        if (EasyApplication.isRTMP()) {
-            findViewById(R.id.toolbar_about).setVisibility(View.GONE);
-        }
-
         String url = "http://www.easydarwin.org/versions/easypusher/version.txt";
         if (EasyApplication.isRTMP()) {
             url = "http://www.easydarwin.org/versions/easyrtmp/version.txt";
