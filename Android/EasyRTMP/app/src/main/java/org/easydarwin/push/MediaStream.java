@@ -1,6 +1,7 @@
 package org.easydarwin.push;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
@@ -20,6 +21,7 @@ import android.view.SurfaceHolder;
 
 import org.easydarwin.audio.AudioStream;
 import org.easydarwin.bus.SupportResolution;
+import org.easydarwin.easypusher.BackgroundCameraService;
 import org.easydarwin.easypusher.BuildConfig;
 import org.easydarwin.easypusher.EasyApplication;
 import org.easydarwin.easyrtmp.push.EasyRTMP;
@@ -92,8 +94,12 @@ public class MediaStream {
             public void run(){
                 try{
                     super.run();
+                } catch (Throwable e) {
+                    Intent intent = new Intent(mApplicationContext, BackgroundCameraService.class);
+                    mApplicationContext.stopService(intent);
                 } finally {
                     stopStream();
+                    stopPreview();
                     destroyCamera();
                 }
             }
