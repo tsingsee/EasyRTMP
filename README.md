@@ -4,7 +4,6 @@
 
 EasyRTMP是EasyDarwin团队开发的一套RTMP直播推送功能组件，内部集成了包括：基本RTMP协议、断线重连、异步推送、环形缓冲区、推送网络拥塞自动丢帧、缓冲区关键帧检索、事件回调(断线、音视频数据回调)，通过EasyRTMP我们就可以避免接触到稍显复杂的RTMP推送或者客户端流程，只需要调用EasyRTMP的几个API接口，就能轻松、稳定地进行流媒体音视频数据的推送，支持市面上绝大部分的RTMP流媒体服务器，包括Red5、Ngnix_rtmp、crtmpserver等主流RTMP服务器，全平台支持：Windows、Linux、ARM(各种交叉编译工具链)、Android、iOS;
 
-- **我们同时提供Windows、Linux、ARM、Android、IOS版本的EasyRTMP SDK**：EasyRTMP SDK商业使用需要经过授权才能永久使用，商业授权方案可以邮件发送至[support@easydarwin.org](mailto:support@easydarwin.org "EasyDarwin support mail")或者通过电话Tel：**13718530929** 进行更深入的技术与合作咨询；
 
 ### 调用方法 ###
 
@@ -38,6 +37,10 @@ EasyRTMP是EasyDarwin团队开发的一套RTMP直播推送功能组件，内部�
 		"-----------------------------------------------------------"
 	
 
+## 工作流程 ##
+ 
+![EasyPusher Work Flow](http://www.easydarwin.org/github/images/easyrtmp/easyrtmp_workfolw.png)
+ 
 ### 调用示例 ###
 
 - EasyRTMP Android：支持前/后摄像头直播、安卓屏幕直播
@@ -56,12 +59,25 @@ EasyRTMP是EasyDarwin团队开发的一套RTMP直播推送功能组件，内部�
 ![EasyRTMP](http://www.easydarwin.org/skin/easydarwin/images/easyrtmp20161101.png)
 
 
-### 获取更多信息 ###
+## 技术支持 ##
 
-邮件：[support@easydarwin.org](mailto:support@easydarwin.org) 
+- 邮件：[support@easydarwin.org](mailto:support@easydarwin.org) 
 
-WEB：[www.EasyDarwin.org](http://www.easydarwin.org)
+- Tel：13718530929
 
-Copyright &copy; EasyDarwin.org 2012-2017
+- QQ交流群：[587254841](https://jq.qq.com/?_wv=1027&k=5dkmdix "EasyRTMP")
+
+> EasyRTMP是一款非常稳定的RTMP推流直播组件，各平台版本需要经过授权才能商业使用，商业授权方案可以通过以上渠道进行更深入的技术与合作咨询；
+
+
+## 获取更多信息 ##
+
+**EasyDarwin**开源流媒体服务器：[www.EasyDarwin.org](http://www.easydarwin.org)
+
+**EasyDSS**商用流媒体解决方案：[www.EasyDSS.com](http://www.easydss.com)
+
+**EasyNVR**无插件直播方案：[www.EasyNVR.com](http://www.easynvr.com)
+
+Copyright &copy; EasyDarwin Team 2012-2017
 
 ![EasyDarwin](http://www.easydarwin.org/skin/easydarwin/images/wx_qrcode.jpg)
