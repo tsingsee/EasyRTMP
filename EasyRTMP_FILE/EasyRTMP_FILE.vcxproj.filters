@@ -1,0 +1,195 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="MP4Demux">
+      <UniqueIdentifier>{60683f15-66d5-42fa-ae0c-0090b351a120}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MP4Demux\Base_box.h">
+      <Filter>MP4Demux</Filter>
+    </ClInclude>
+    <ClInclude Include="MP4Demux\Define_head.h">
+      <Filter>MP4Demux</Filter>
+    </ClInclude>
+    <ClInclude Include="MP4Demux\Head.h">
+      <Filter>MP4Demux</Filter>
+    </ClInclude>
+    <ClInclude Include="MP4Demux\inttype.h">
+      <Filter>MP4Demux</Filter>
+    </ClInclude>
+    <ClInclude Include="MP4Demux\Mp4_avc1_box.h">
+      <Filter>MP4Demux</Filter>
+    </ClInclude>
+    <ClInclude Include="MP4Demux\Mp4_avcC_box.h">
+      <Filter>MP4Demux</Filter>
+    </ClInclude>
+    <ClInclude Include="MP4Demux\Mp4_ftyp_box.h">
+      <Filter>MP4Demux</Filter>
+    </ClInclude>
+    <ClInclude Include="MP4Demux\Mp4_hdlr_box.h">
+      <Filter>MP4Demux</Filter>
+    </ClInclude>
+    <ClInclude Include="MP4Demux\Mp4_mdat_box.h">
+      <Filter>MP4Demux</Filter>
+    </ClInclude>
+    <ClInclude Include="MP4Demux\Mp4_mdhd_box.h">
+      <Filter>MP4Demux</Filter>
+    </ClInclude>
+    <ClInclude Include="MP4Demux\Mp4_mdia_box.h">
+      <Filter>MP4Demux</Filter>
+    </ClInclude>
+    <ClInclude Include="MP4Demux\Mp4_minf_box.h">
+      <Filter>MP4Demux</Filter>
+    </ClInclude>
+    <ClInclude Include="MP4Demux\Mp4_moov_box.h">
+      <Filter>MP4Demux</Filter>
+    </ClInclude>
+    <ClInclude Include="MP4Demux\Mp4_mp4a_box.h">
+      <Filter>MP4Demux</Filter>
+    </ClInclude>
+    <ClInclude Include="MP4Demux\Mp4_mvhd_box.h">
+      <Filter>MP4Demux</Filter>
+    </ClInclude>
+    <ClInclude Include="MP4Demux\Mp4_root_box.h">
+      <Filter>MP4Demux</Filter>
+    </ClInclude>
+    <ClInclude Include="MP4Demux\Mp4_stbl_box.h">
+      <Filter>MP4Demux</Filter>
+    </ClInclude>
+    <ClInclude Include="MP4Demux\Mp4_stco_box.h">
+      <Filter>MP4Demux</Filter>
+    </ClInclude>
+    <ClInclude Include="MP4Demux\Mp4_stsc_box.h">
+      <Filter>MP4Demux</Filter>
+    </ClInclude>
+    <ClInclude Include="MP4Demux\Mp4_stsd_box.h">
+      <Filter>MP4Demux</Filter>
+    </ClInclude>
+    <ClInclude Include="MP4Demux\Mp4_stss_box.h">
+      <Filter>MP4Demux</Filter>
+    </ClInclude>
+    <ClInclude Include="MP4Demux\Mp4_stsz_box.h">
+      <Filter>MP4Demux</Filter>
+    </ClInclude>
+    <ClInclude Include="MP4Demux\Mp4_stts_box.h">
+      <Filter>MP4Demux</Filter>
+    </ClInclude>
+    <ClInclude Include="MP4Demux\Mp4_tkhd_box.h">
+      <Filter>MP4Demux</Filter>
+    </ClInclude>
+    <ClInclude Include="MP4Demux\Mp4_trak_box.h">
+      <Filter>MP4Demux</Filter>
+    </ClInclude>
+    <ClInclude Include="MP4Demux\Public_class.h">
+      <Filter>MP4Demux</Filter>
+    </ClInclude>
+    <ClInclude Include="MP4Demux\Public_func.h">
+      <Filter>MP4Demux</Filter>
+    </ClInclude>
+    <ClInclude Include="MP4Demux\read_write.h">
+      <Filter>MP4Demux</Filter>
+    </ClInclude>
+    <ClInclude Include="MP4Demux\Sample_description.h">
+      <Filter>MP4Demux</Filter>
+    </ClInclude>
+    <ClInclude Include="getopt.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="trace.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="MP4Demux\Mp4_avc1_box.cpp">
+      <Filter>MP4Demux</Filter>
+    </ClCompile>
+    <ClCompile Include="MP4Demux\Mp4_avcC_box.cpp">
+      <Filter>MP4Demux</Filter>
+    </ClCompile>
+    <ClCompile Include="MP4Demux\Mp4_ftyp_box.cpp">
+      <Filter>MP4Demux</Filter>
+    </ClCompile>
+    <ClCompile Include="MP4Demux\Mp4_hdlr_box.cpp">
+      <Filter>MP4Demux</Filter>
+    </ClCompile>
+    <ClCompile Include="MP4Demux\Mp4_mdat_box.cpp">
+      <Filter>MP4Demux</Filter>
+    </ClCompile>
+    <ClCompile Include="MP4Demux\Mp4_mdhd_box.cpp">
+      <Filter>MP4Demux</Filter>
+    </ClCompile>
+    <ClCompile Include="MP4Demux\Mp4_mdia_box.cpp">
+      <Filter>MP4Demux</Filter>
+    </ClCompile>
+    <ClCompile Include="MP4Demux\Mp4_minf_box.cpp">
+      <Filter>MP4Demux</Filter>
+    </ClCompile>
+    <ClCompile Include="MP4Demux\Mp4_moov_box.cpp">
+      <Filter>MP4Demux</Filter>
+    </ClCompile>
+    <ClCompile Include="MP4Demux\Mp4_mp4a_box.cpp">
+      <Filter>MP4Demux</Filter>
+    </ClCompile>
+    <ClCompile Include="MP4Demux\Mp4_mvhd_box.cpp">
+      <Filter>MP4Demux</Filter>
+    </ClCompile>
+    <ClCompile Include="MP4Demux\Mp4_root_box.cpp">
+      <Filter>MP4Demux</Filter>
+    </ClCompile>
+    <ClCompile Include="MP4Demux\Mp4_stbl_box.cpp">
+      <Filter>MP4Demux</Filter>
+    </ClCompile>
+    <ClCompile Include="MP4Demux\Mp4_stco_box.cpp">
+      <Filter>MP4Demux</Filter>
+    </ClCompile>
+    <ClCompile Include="MP4Demux\Mp4_stsc_box.cpp">
+      <Filter>MP4Demux</Filter>
+    </ClCompile>
+    <ClCompile Include="MP4Demux\Mp4_stsd_box.cpp">
+      <Filter>MP4Demux</Filter>
+    </ClCompile>
+    <ClCompile Include="MP4Demux\Mp4_stss_box.cpp">
+      <Filter>MP4Demux</Filter>
+    </ClCompile>
+    <ClCompile Include="MP4Demux\Mp4_stsz_box.cpp">
+      <Filter>MP4Demux</Filter>
+    </ClCompile>
+    <ClCompile Include="MP4Demux\Mp4_stts_box.cpp">
+      <Filter>MP4Demux</Filter>
+    </ClCompile>
+    <ClCompile Include="MP4Demux\Mp4_tkhd_box.cpp">
+      <Filter>MP4Demux</Filter>
+    </ClCompile>
+    <ClCompile Include="MP4Demux\Mp4_trak_box.cpp">
+      <Filter>MP4Demux</Filter>
+    </ClCompile>
+    <ClCompile Include="MP4Demux\Public_func.cpp">
+      <Filter>MP4Demux</Filter>
+    </ClCompile>
+    <ClCompile Include="MP4Demux\read_write.cpp">
+      <Filter>MP4Demux</Filter>
+    </ClCompile>
+    <ClCompile Include="getopt.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="trace.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

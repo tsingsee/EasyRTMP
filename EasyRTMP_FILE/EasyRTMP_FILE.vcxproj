@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="getopt.h" />
+    <ClInclude Include="MP4Demux\Base_box.h" />
+    <ClInclude Include="MP4Demux\Define_head.h" />
+    <ClInclude Include="MP4Demux\Head.h" />
+    <ClInclude Include="MP4Demux\inttype.h" />
+    <ClInclude Include="MP4Demux\Mp4_avc1_box.h" />
+    <ClInclude Include="MP4Demux\Mp4_avcC_box.h" />
+    <ClInclude Include="MP4Demux\Mp4_ftyp_box.h" />
+    <ClInclude Include="MP4Demux\Mp4_hdlr_box.h" />
+    <ClInclude Include="MP4Demux\Mp4_mdat_box.h" />
+    <ClInclude Include="MP4Demux\Mp4_mdhd_box.h" />
+    <ClInclude Include="MP4Demux\Mp4_mdia_box.h" />
+    <ClInclude Include="MP4Demux\Mp4_minf_box.h" />
+    <ClInclude Include="MP4Demux\Mp4_moov_box.h" />
+    <ClInclude Include="MP4Demux\Mp4_mp4a_box.h" />
+    <ClInclude Include="MP4Demux\Mp4_mvhd_box.h" />
+    <ClInclude Include="MP4Demux\Mp4_root_box.h" />
+    <ClInclude Include="MP4Demux\Mp4_stbl_box.h" />
+    <ClInclude Include="MP4Demux\Mp4_stco_box.h" />
+    <ClInclude Include="MP4Demux\Mp4_stsc_box.h" />
+    <ClInclude Include="MP4Demux\Mp4_stsd_box.h" />
+    <ClInclude Include="MP4Demux\Mp4_stss_box.h" />
+    <ClInclude Include="MP4Demux\Mp4_stsz_box.h" />
+    <ClInclude Include="MP4Demux\Mp4_stts_box.h" />
+    <ClInclude Include="MP4Demux\Mp4_tkhd_box.h" />
+    <ClInclude Include="MP4Demux\Mp4_trak_box.h" />
+    <ClInclude Include="MP4Demux\Public_class.h" />
+    <ClInclude Include="MP4Demux\Public_func.h" />
+    <ClInclude Include="MP4Demux\read_write.h" />
+    <ClInclude Include="MP4Demux\Sample_description.h" />
+    <ClInclude Include="trace.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="getopt.c" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="MP4Demux\Mp4_avc1_box.cpp" />
+    <ClCompile Include="MP4Demux\Mp4_avcC_box.cpp" />
+    <ClCompile Include="MP4Demux\Mp4_ftyp_box.cpp" />
+    <ClCompile Include="MP4Demux\Mp4_hdlr_box.cpp" />
+    <ClCompile Include="MP4Demux\Mp4_mdat_box.cpp" />
+    <ClCompile Include="MP4Demux\Mp4_mdhd_box.cpp" />
+    <ClCompile Include="MP4Demux\Mp4_mdia_box.cpp" />
+    <ClCompile Include="MP4Demux\Mp4_minf_box.cpp" />
+    <ClCompile Include="MP4Demux\Mp4_moov_box.cpp" />
+    <ClCompile Include="MP4Demux\Mp4_mp4a_box.cpp" />
+    <ClCompile Include="MP4Demux\Mp4_mvhd_box.cpp" />
+    <ClCompile Include="MP4Demux\Mp4_root_box.cpp" />
+    <ClCompile Include="MP4Demux\Mp4_stbl_box.cpp" />
+    <ClCompile Include="MP4Demux\Mp4_stco_box.cpp" />
+    <ClCompile Include="MP4Demux\Mp4_stsc_box.cpp" />
+    <ClCompile Include="MP4Demux\Mp4_stsd_box.cpp" />
+    <ClCompile Include="MP4Demux\Mp4_stss_box.cpp" />
+    <ClCompile Include="MP4Demux\Mp4_stsz_box.cpp" />
+    <ClCompile Include="MP4Demux\Mp4_stts_box.cpp" />
+    <ClCompile Include="MP4Demux\Mp4_tkhd_box.cpp" />
+    <ClCompile Include="MP4Demux\Mp4_trak_box.cpp" />
+    <ClCompile Include="MP4Demux\Public_func.cpp" />
+    <ClCompile Include="MP4Demux\read_write.cpp" />
+    <ClCompile Include="trace.c" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{0D20F1D1-409E-4799-A838-AC74CFE27456}</ProjectGuid>
+    <RootNamespace>EasyRTMP_FILE</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v100</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>../Include/</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>../Lib/</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;wsock32.lib;winmm.lib;libEasyRTMP.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>../Include/</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>../Lib/</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;wsock32.lib;winmm.lib;libEasyPusher.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
