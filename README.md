@@ -8,15 +8,18 @@ EasyRTMP是EasyDarwin团队开发的一套RTMP直播推送功能组件，内部�
 ### 调用方法 ###
 
 - **EasyRTMP_File**：EasyRTMP做为RTMP推送端，将本地文件推送到RTMP流媒体服务器；
-- **EasyRTMP_RTSP**：将RTSP/RTP数据获取到本地，再通过EasyRTMP推送到RTMP服务器；
-- **EasyRTMP-Android**：Android安卓RTMP直播推流，采集安卓手机前/后摄像头、麦克风音视频推送直播；项目地址：https://github.com/EasyDSS/EasyRTMP-Android
-- **EasyRTMP-iOS**：iOS苹果RTMP直播推流，采集苹果手机前/后摄像头、麦克风音视频推送直播；项目地址：https://github.com/EasyDSS/EasyRTMP-iOS
 
-> 我们在公网部署了一台演示的RTMP服务器系统：http://www.easydss.com:10088/live.html ，支持RTMP直播、服务端录像、检索、回放等功能；
+- **EasyRTMP_RTSP**：将RTSP/RTP数据获取到本地，再通过EasyRTMP推送到RTMP服务器；
+
+- **EasyRTMP-Android**：Android安卓RTMP直播推流，采集安卓手机前/后摄像头、麦克风音视频推送直播；项目地址：[https://github.com/EasyDSS/EasyRTMP-Android](https://github.com/EasyDSS/EasyRTMP-Android "EasyRTMP-Android")
+
+- **EasyRTMP-iOS**：iOS苹果RTMP直播推流，采集苹果手机前/后摄像头、麦克风音视频推送直播；项目地址：[https://github.com/EasyDSS/EasyRTMP-iOS](https://github.com/EasyDSS/EasyRTMP-iOS "EasyRTMP-iOS")
+
+> 我们在公网部署了一台演示的RTMP服务器系统：[http://www.easydss.com:10088/](http://www.easydss.com:10088/live.html "EasyDSS RTMP流媒体服务器") ，支持RTMP直播、服务端录像、检索、回放等功能；
 
 ### 编译方法 ###
 
-	Windows平台采用Visual Studio 2010编译
+	Windows平台采用Visual Studio 2010编译sln
 
 	Linux下执行Builtit文件编译,具体如下：
 		chmod a+x Builtit
@@ -59,6 +62,21 @@ EasyRTMP是EasyDarwin团队开发的一套RTMP直播推送功能组件，内部�
 ![EasyRTMP](http://www.easydarwin.org/skin/easydarwin/images/easyrtmp20161101.png)
 
 
+## 调用示例 ##
+
+- EasyRTMP Android：支持前/后摄像头直播、安卓屏幕直播
+
+	[https://fir.im/easyrtmp](https://fir.im/easyrtmp "https://fir.im/easyrtmp")
+
+	![EasyRTMP Android](http://www.easydarwin.org/github/images/easyrtmpfirim20170409.png)
+
+- EasyRTMP iOS：支持前/后摄像头直播
+
+	[https://itunes.apple.com/us/app/easyrtmp/id1222410811?mt=8](https://itunes.apple.com/us/app/easyrtmp/id1222410811?mt=8 "EasyRTMP_iOS")
+
+	![](http://www.easydarwin.org/github/images/easyrtmpios20170409.png)
+
+
 ## 技术支持 ##
 
 - 邮件：[support@easydarwin.org](mailto:support@easydarwin.org) 
@@ -78,6 +96,6 @@ EasyRTMP是EasyDarwin团队开发的一套RTMP直播推送功能组件，内部�
 
 **EasyNVR**无插件直播方案：[www.EasyNVR.com](http://www.easynvr.com)
 
-Copyright &copy; EasyDarwin Team 2012-2017
+Copyright &copy; EasyDarwin Team 2012-2018
 
 ![EasyDarwin](http://www.easydarwin.org/skin/easydarwin/images/wx_qrcode.jpg)
