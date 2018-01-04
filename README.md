@@ -22,7 +22,7 @@ EasyRTMP是EasyDarwin团队开发的一套RTMP直播推送功能组件，内部�
 	Windows平台采用Visual Studio 2010编译sln
 
 	Linux下执行Builtit文件编译,具体如下：
-		chmod a+x Builtit
+		chmod +x Builtit
 		
 		"**************build stream from EasyRTMP_RTSP demo******************"
 		"1. build 32bit program ./Buildit rtsp i386 [target in i386]"	
