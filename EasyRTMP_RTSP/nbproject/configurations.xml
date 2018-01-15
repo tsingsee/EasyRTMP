@@ -65,7 +65,7 @@
           <linkerAddLib>
             <pElem>../Lib/${CND_CONF}</pElem>
             <pElem>libEasyRTSPClient/Lib/${CND_CONF}</pElem>
-            <pElem>../Lib/EasyAACEncloder/${CND_CONF}</pElem>
+            <pElem>../Lib/EasyAACEncoder/${CND_CONF}</pElem>
           </linkerAddLib>
           <commandLine>-leasyrtmp -leasyrtspclient -leasyaacencoder -pthread -lrt</commandLine>
         </linkerTool>
@@ -106,7 +106,7 @@
             <pElem>/usr/lib/i386-linux-gnu</pElem>
             <pElem>../Lib/${CND_CONF}</pElem>
             <pElem>libEasyRTSPClient/Lib/${CND_CONF}</pElem>
-            <pElem>../Lib/EasyAACEncloder/${CND_CONF}</pElem>
+            <pElem>../Lib/EasyAACEncoder/${CND_CONF}</pElem>
           </linkerAddLib>
           <commandLine>-leasyrtmp -leasyrtspclient -leasyaacencoder -pthread -lrt</commandLine>
         </linkerTool>
