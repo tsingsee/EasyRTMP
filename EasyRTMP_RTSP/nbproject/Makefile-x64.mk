@@ -53,7 +53,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-L../Lib/${CND_CONF} -LlibEasyRTSPClient/Lib/${CND_CONF} -L../Lib/EasyAACEncloder/${CND_CONF}
+LDLIBSOPTIONS=-L../Lib/${CND_CONF} -LlibEasyRTSPClient/Lib/${CND_CONF} -L../Lib/EasyAACEncoder/${CND_CONF}
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
