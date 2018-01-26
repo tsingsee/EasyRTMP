@@ -12,10 +12,6 @@ usage()
 	echo "5. build 64bit program ./Buildit file x64 [target in x64]"	
 	echo "6. clean up ./Buildit file clean"
 	echo "-----------------------------------------------------------"
-	echo "**************build stream from EasyRTMP_SDK demo*******************"
-	echo "7. build 32bit program ./Buildit sdk i386 [target in i386]"	
-	echo "8. clean up ./Buildit sdk clean"
-	echo "-----------------------------------------------------------"
 }
 
 build()

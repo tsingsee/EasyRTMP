@@ -34,10 +34,6 @@ EasyRTMP是EasyDarwin团队开发的一套RTMP直播推送功能组件，内部�
 		"5. build 64bit program ./Buildit file x64 [target in x64]"	
 		"6. clean up ./Buildit file clean"
 		"-----------------------------------------------------------"
-		"**************build stream from EasyRTMP_SDK demo*******************"
-		"7. build 32bit program ./Buildit sdk i386 [target in i386]"	
-		"8. clean up ./Buildit sdk clean"
-		"-----------------------------------------------------------"
 	
 
 ## 工作流程 ##
