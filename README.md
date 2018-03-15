@@ -9,7 +9,7 @@ EasyRTMP是EasyDarwin团队开发的一套RTMP直播推送功能组件，内部�
 
 - **EasyRTMP_File**：EasyRTMP做为RTMP推送端，将本地文件推送到RTMP流媒体服务器；
 
-- **EasyRTMP_RTSP**：将RTSP/RTP数据获取到本地，再通过EasyRTMP推送到RTMP服务器；
+- **EasyRTMP_RTSP**：将RTSP/RTP数据获取到本地，再通过EasyRTMP推送到RTMP服务器；EasyRTMP_RTSP Demo除了EasyRTMP外还涉及到EasyRTSPClient库需要商业授权，EasyRTSPClient库是拉取RTSP流输出H264流和音频流的跨平台SDK。
 
 - **EasyRTMP-Android**：Android安卓RTMP直播推流，采集安卓手机前/后摄像头、麦克风音视频推送直播；项目地址：[https://github.com/EasyDSS/EasyRTMP-Android](https://github.com/EasyDSS/EasyRTMP-Android "EasyRTMP-Android")
 
