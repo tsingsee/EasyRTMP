@@ -27,7 +27,7 @@ typedef struct __EASY_AV_Frame
     Easy_U8     *pBuffer;			/* 数据 */
 	Easy_U32	u32TimestampSec;	/* 时间戳(秒)*/
 	Easy_U32	u32TimestampUsec;	/* 时间戳(微秒) */
-}EASY_AV_Frame;
+} EASY_AV_Frame;
 
 /* 推送事件类型定义 */
 typedef enum __EASY_RTMP_STATE_T
@@ -39,7 +39,7 @@ typedef enum __EASY_RTMP_STATE_T
     EASY_RTMP_STATE_PUSHING,                /* 推流中 */
     EASY_RTMP_STATE_DISCONNECTED,           /* 断开连接 */
     EASY_RTMP_STATE_ERROR
-}EASY_RTMP_STATE_T;
+} EASY_RTMP_STATE_T;
 
 /*
 	_frameType:		EASY_SDK_VIDEO_FRAME_FLAG/EASY_SDK_AUDIO_FRAME_FLAG/EASY_SDK_EVENT_FRAME_FLAG/...	
@@ -67,13 +67,16 @@ extern "C"
 	EasyRTMP_API Easy_I32 Easy_APICALL EasyRTMP_SetCallback(Easy_RTMP_Handle handle, EasyRTMPCallBack _callback, void * _userptr);
 
 	/* 创建RTMP推送的参数信息 */
-	EasyRTMP_API Easy_I32 Easy_APICALL Easy_APICALL EasyRTMP_InitMetadata(Easy_RTMP_Handle handle, EASY_MEDIA_INFO_T*  pstruStreamInfo, Easy_U32 bufferKSize);
+	EasyRTMP_API Easy_I32 Easy_APICALL EasyRTMP_InitMetadata(Easy_RTMP_Handle handle, EASY_MEDIA_INFO_T*  pstruStreamInfo, Easy_U32 bufferKSize);
 	
 	/* 连接RTMP服务器 */
 	EasyRTMP_API Easy_Bool Easy_APICALL EasyRTMP_Connect(Easy_RTMP_Handle handle, const char *url);
 
 	/* 推送H264或AAC流 */
 	EasyRTMP_API Easy_U32 Easy_APICALL EasyRTMP_SendPacket(Easy_RTMP_Handle handle, EASY_AV_Frame* frame);
+
+    /* 获取缓冲区大小 */
+    EasyRTMP_API Easy_I32 Easy_APICALL EasyRTMP_GetBufInfo(Easy_RTMP_Handle handle, int* usedSize, int* totalSize);
 
 	/* 停止RTMP推送，释放句柄 */
 	EasyRTMP_API void Easy_APICALL EasyRTMP_Release(Easy_RTMP_Handle handle);

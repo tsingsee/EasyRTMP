@@ -20,6 +20,7 @@
 #define Easy_RTSP_Handle void*
 #define Easy_Pusher_Handle void*
 #define Easy_HLS_Handle void*
+#define Easy_Handle void*
 
 typedef int						Easy_I32;
 
@@ -96,6 +97,7 @@ typedef enum __EASY_ACTIVATE_ERR_CODE_ENUM
 #define EASY_SDK_RTP_FRAME_FLAG		0x00000008		/* RTP帧标志 */
 #define EASY_SDK_SDP_FRAME_FLAG		0x00000010		/* SDP帧标志 */
 #define EASY_SDK_MEDIA_INFO_FLAG	0x00000020		/* 媒体类型标志*/
+#define EASY_SDK_SNAP_FRAME_FLAG	0x00000040		/* 图片标志*/
 
 /* 视频关键字标识 */
 #define EASY_SDK_VIDEO_FRAME_I		0x01		/* I帧 */
@@ -121,14 +123,14 @@ typedef struct __EASY_MEDIA_INFO_T
 	Easy_U32 u32AudioChannel;			/* 音频通道数 */
 	Easy_U32 u32AudioBitsPerSample;		/* 音频采样精度 */
 
-	Easy_U32 u32VpsLength;				/* 视频Vps帧长度 */
-	Easy_U32 u32SpsLength;				/* 视频Sps帧长度 */
-	Easy_U32 u32PpsLength;				/* 视频Pps帧长度 */
-	Easy_U32 u32SeiLength;				/* 视频Sei帧长度 */
-	Easy_U8	 u8Vps[255];				/* 视频Vps帧内容 */
-	Easy_U8	 u8Sps[255];				/* 视频Sps帧内容 */
-	Easy_U8	 u8Pps[128];				/* 视频Pps帧内容 */
-	Easy_U8	 u8Sei[128];				/* 视频Sei帧内容 */
+	Easy_U32 u32VpsLength;
+	Easy_U32 u32SpsLength;
+	Easy_U32 u32PpsLength;
+	Easy_U32 u32SeiLength;
+	Easy_U8	 u8Vps[255];
+	Easy_U8	 u8Sps[255];
+	Easy_U8	 u8Pps[128];
+	Easy_U8	 u8Sei[128];
 }EASY_MEDIA_INFO_T;
 
 /* 帧信息 */
@@ -154,6 +156,6 @@ typedef struct
 	
 	float			bitrate;			/* 比特率 */
 	float			losspacket;			/* 丢包率 */
-}RTSP_FRAME_INFO;
+}EASY_FRAME_INFO;
 
 #endif
