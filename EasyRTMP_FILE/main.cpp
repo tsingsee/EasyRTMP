@@ -31,7 +31,7 @@ using namespace std;
 #define KEY "79397037795A4F576B597141776374627044512B4A664A6C59584E35636E52746346396D6157786C567778576F502B6C3430566863336C4559584A33615735555A57467453584E55614756435A584E30514449774D54686C59584E35"
 #endif
 
-char* SRTMP=	"rtmp://www.easydss.com:10085/hls/streamxxx";	//Default RTMP Push StreamName
+char* SRTMP=	"rtmp://demo.easydss.com:10085/hls/streamxxx";	//Default RTMP Push StreamName
 char* ProgName;								//Program Name
 
 /* EasyRTMP数据回调 */

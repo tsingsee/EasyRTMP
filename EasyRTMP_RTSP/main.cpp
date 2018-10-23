@@ -230,7 +230,7 @@ int main(int argc, char * argv[])
 	int ch;
 
 	srand((unsigned)time(NULL));
-	sprintf(SRTMP,"rtmp://www.easydss.com:10085/hls/%d", rand()%99999999);
+	sprintf(SRTMP,"rtmp://demo.easydss.com:10085/hls/%d", rand()%99999999);
 
 	int iret = EasyRTMP_Activate(KEY);
 	if (iret != 0)
