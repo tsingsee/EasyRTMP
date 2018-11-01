@@ -156,6 +156,6 @@ typedef struct
 	
 	float			bitrate;			/* 比特率 */
 	float			losspacket;			/* 丢包率 */
-}EASY_FRAME_INFO;
+}EASY_FRAME_INF, RTSP_FRAME_INFO;
 
 #endif
