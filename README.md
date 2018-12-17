@@ -65,8 +65,6 @@ EasyRTMP是EasyDarwin团队开发的一套RTMP直播推送功能组件，内部�
 
 - 邮件：[support@easydarwin.org](mailto:support@easydarwin.org) 
 
-- Tel：13718530929
-
 - QQ交流群：<a href="https://jq.qq.com/?_wv=1027&k=5dkmdix" title="EasyRTMP" target="_blank">**587254841**</a>
 
 > EasyRTMP是一款非常稳定的RTMP推流直播组件，各平台版本需要经过授权才能商业使用，商业授权方案可以通过以上渠道进行更深入的技术与合作咨询；
