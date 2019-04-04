@@ -35,3 +35,7 @@ ipch/
 *.VC.db
 
 Android/EasyRTMP/update/
+
+/EasyRTMP_RTSP/Debug/*
+/EasyRTMP_HIK/Debug/*
+*.exe
