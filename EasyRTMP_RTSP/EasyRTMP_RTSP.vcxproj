@@ -101,7 +101,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../Lib/;../Lib/EasyAACEncoder;libEasyRTSPClient/Lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Lib/x86;../Lib/EasyAACEncoder/x86;libEasyRTSPClient/Lib/x86</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
