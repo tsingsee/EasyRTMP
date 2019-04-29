@@ -71,4 +71,6 @@ EasyRTMP是[TSINGSEE青犀开放平台](http://open.tsingsee.com "TSINGSEE青犀
 
 ## 获取更多信息 ##
 
-**TSINGSEE**青犀开放平台：[http://open.tsingsee.com](http://open.tsingsee.com)
+TSINGSEE青犀开放平台：[http://open.tsingsee.com](http://open.tsingsee.com "TSINGSEE青犀开放平台")
+
+Copyright &copy; TSINGSEE.com 2012~2019
