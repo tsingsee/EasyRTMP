@@ -1,8 +1,7 @@
 ## EasyRTMP ##
 
-### **EasyRTMP**是什么？ ###
 
-EasyRTMP是EasyDarwin团队开发的一套RTMP直播推送功能组件，内部集成了包括：基本RTMP协议、断线重连、异步推送、环形缓冲区、推送网络拥塞自动丢帧、缓冲区关键帧检索、事件回调(断线、音视频数据回调)，通过EasyRTMP我们就可以避免接触到稍显复杂的RTMP推送或者客户端流程，只需要调用EasyRTMP的几个API接口，就能轻松、稳定地进行流媒体音视频数据的推送，支持市面上绝大部分的RTMP流媒体服务器，包括Wowza、Red5、nginx-rtmp、crtmpserver等主流RTMP服务器，全平台支持：Windows、Linux、ARM(各种交叉编译工具链)、Android、iOS;
+EasyRTMP是[TSINGSEE青犀开放平台](http://open.tsingsee.com "TSINGSEE青犀开放平台")开发的一套RTMP直播推送功能组件，内部集成了包括：基本RTMP协议、断线重连、异步推送、环形缓冲区、推送网络拥塞自动丢帧、缓冲区关键帧检索、事件回调(断线、音视频数据回调)，通过EasyRTMP我们就可以避免接触到稍显复杂的RTMP推送或者客户端流程，只需要调用EasyRTMP的几个API接口，就能轻松、稳定地进行流媒体音视频数据的推送，支持市面上绝大部分的RTMP流媒体服务器，包括Wowza、Red5、nginx-rtmp、crtmpserver等主流RTMP服务器，全平台支持：Windows、Linux、ARM(各种交叉编译工具链)、Android、iOS;
 
 
 ### 调用方法 ###
@@ -72,12 +71,4 @@ EasyRTMP是EasyDarwin团队开发的一套RTMP直播推送功能组件，内部�
 
 ## 获取更多信息 ##
 
-**EasyDarwin**开源流媒体服务器：[www.EasyDarwin.org](http://www.easydarwin.org)
-
-**EasyDSS**商用流媒体解决方案：[www.EasyDSS.com](http://www.easydss.com)
-
-**EasyNVR**无插件直播方案：[www.EasyNVR.com](http://www.easynvr.com)
-
-Copyright &copy; EasyDarwin Team 2012-2018
-
-![EasyDarwin](http://www.easydarwin.org/skin/easydarwin/images/wx_qrcode.jpg)
+**TSINGSEE**青犀开放平台：[http://open.tsingsee.com](http://open.tsingsee.com)
