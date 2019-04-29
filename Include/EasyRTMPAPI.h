@@ -19,16 +19,6 @@
 
 #define	libEasyRTMP_PROG_NAME	"libEasyRTMP v3.0.19.0415"
 
-typedef struct __EASY_AV_Frame
-{
-    Easy_U32    u32AVFrameFlag;		/* 帧标志  视频 or 音频 */
-    Easy_U32    u32AVFrameLen;		/* 帧的长度 */
-    Easy_U32    u32VFrameType;		/* 视频的类型，I帧或P帧 */
-    Easy_U8     *pBuffer;			/* 数据 */
-	Easy_U32	u32TimestampSec;	/* 时间戳(秒)*/
-	Easy_U32	u32TimestampUsec;	/* 时间戳(微秒) */
-} EASY_AV_Frame;
-
 /* 推送事件类型定义 */
 typedef enum __EASY_RTMP_STATE_T
 {
