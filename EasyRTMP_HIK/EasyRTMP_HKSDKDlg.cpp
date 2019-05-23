@@ -838,30 +838,31 @@ bool CDecCallBack_DemoDlg::LinkRtmp()
 	}
 
 	int isActivated = EasyRTMP_Activate(KEY);
-	switch(isActivated)
+	if(isActivated <= 0)
 	{
-	case EASY_ACTIVATE_INVALID_KEY:
-		printf("KEY is EASY_ACTIVATE_INVALID_KEY!\n");
-		break;
-	case EASY_ACTIVATE_TIME_ERR:
-		printf("KEY is EASY_ACTIVATE_TIME_ERR!\n");
-		break;
-	case EASY_ACTIVATE_PROCESS_NAME_LEN_ERR:
-		printf("KEY is EASY_ACTIVATE_PROCESS_NAME_LEN_ERR!\n");
-		break;
-	case EASY_ACTIVATE_PROCESS_NAME_ERR:
-		printf("KEY is EASY_ACTIVATE_PROCESS_NAME_ERR!\n");
-		break;
-	case EASY_ACTIVATE_VALIDITY_PERIOD_ERR:
-		printf("KEY is EASY_ACTIVATE_VALIDITY_PERIOD_ERR!\n");
-		break;
-	case EASY_ACTIVATE_SUCCESS:
-		printf("KEY is EASY_ACTIVATE_SUCCESS!\n");
-		break;
-	}
-
-	if(EASY_ACTIVATE_SUCCESS != isActivated)
+		switch(isActivated)
+		{
+		case EASY_ACTIVATE_INVALID_KEY:
+			printf("KEY is EASY_ACTIVATE_INVALID_KEY!\n");
+			break;
+		case EASY_ACTIVATE_TIME_ERR:
+			printf("KEY is EASY_ACTIVATE_TIME_ERR!\n");
+			break;
+		case EASY_ACTIVATE_PROCESS_NAME_LEN_ERR:
+			printf("KEY is EASY_ACTIVATE_PROCESS_NAME_LEN_ERR!\n");
+			break;
+		case EASY_ACTIVATE_PROCESS_NAME_ERR:
+			printf("KEY is EASY_ACTIVATE_PROCESS_NAME_ERR!\n");
+			break;
+		case EASY_ACTIVATE_VALIDITY_PERIOD_ERR:
+			printf("KEY is EASY_ACTIVATE_VALIDITY_PERIOD_ERR!\n");
+			break;
+		case EASY_ACTIVATE_SUCCESS:
+			printf("KEY is EASY_ACTIVATE_SUCCESS!\n");
+			break;
+		}
 		return -1;
+	}
 
 	m_RtmpHandle = EasyRTMP_Create();
 
