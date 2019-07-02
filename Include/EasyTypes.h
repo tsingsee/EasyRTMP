@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2013-2015 EasyDarwin.ORG.  All rights reserved.
+	Copyright (c) 2012-2019 EasyDarwin.ORG.  All rights reserved.
 	Github: https://github.com/EasyDarwin
 	WEChat: EasyDarwin
 	Website: http://www.easydarwin.org
@@ -131,8 +131,8 @@ typedef struct __EASY_MEDIA_INFO_T
 	Easy_U32 u32SpsLength;
 	Easy_U32 u32PpsLength;
 	Easy_U32 u32SeiLength;
-	Easy_U8	 u8Vps[255];
-	Easy_U8	 u8Sps[255];
+	Easy_U8	 u8Vps[256];
+	Easy_U8	 u8Sps[256];
 	Easy_U8	 u8Pps[128];
 	Easy_U8	 u8Sei[128];
 }EASY_MEDIA_INFO_T;

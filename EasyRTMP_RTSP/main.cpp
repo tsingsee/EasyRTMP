@@ -28,7 +28,7 @@
 #endif
 
 #define MAX_RTMP_URL_LEN 256
-static char* RTSPURL = "rtsp://admin:admin@192.168.1.222/22";
+static char* RTSPURL = "rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov";
 static char SRTMP[MAX_RTMP_URL_LEN] = { 0 };// "rtmp://www.easydss.com:10085/hls/streamxxx";
 
 #ifdef _WIN32
