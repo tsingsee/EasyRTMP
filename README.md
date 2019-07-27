@@ -8,11 +8,11 @@ EasyRTMP是[TSINGSEE青犀开放平台](http://open.tsingsee.com "TSINGSEE青犀
 
 - **EasyRTMP_RTSP**：将RTSP/RTP数据获取到本地，再通过EasyRTMP推送到RTMP服务器；EasyRTMP_RTSP Demo除了EasyRTMP外还涉及到EasyRTSPClient库需要商业授权，EasyRTSPClient库是拉取RTSP流输出H264流和音频流的跨平台SDK。
 
-- **EasyRTMP-Android**：Android安卓RTMP直播推流，采集安卓手机前/后摄像头、麦克风音视频推送直播；项目地址：[https://github.com/EasyDSS/EasyRTMP-Android](https://github.com/EasyDSS/EasyRTMP-Android "EasyRTMP-Android")
+- **EasyRTMP-Android**：Android安卓RTMP直播推流，采集安卓手机前/后摄像头、麦克风音视频推送直播；项目地址：[https://github.com/tsingsee/EasyRTMP-Android](https://github.com/tsingsee/EasyRTMP-Android "EasyRTMP-Android")
 
-- **EasyRTMP-iOS**：iOS苹果RTMP直播推流，采集苹果手机前/后摄像头、麦克风音视频推送直播；项目地址：[https://github.com/EasyDSS/EasyRTMP-iOS](https://github.com/EasyDSS/EasyRTMP-iOS "EasyRTMP-iOS")
+- **EasyRTMP-iOS**：iOS苹果RTMP直播推流，采集苹果手机前/后摄像头、麦克风音视频推送直播；项目地址：[https://github.com/tsingsee/EasyRTMP-iOS](https://github.com/tsingsee/EasyRTMP-iOS "EasyRTMP-iOS")
 
-> 我们在公网部署了一台演示的RTMP服务器系统：[http://demo.easydss.com](http://demo.easydss.com "RTMP流媒体服务器") ，支持RTMP直播、服务端录像、检索、回放等功能；
+> 我们在公网部署了一台演示的RTMP高性能流媒体服务器系统：[http://demo.easydss.com](http://demo.easydss.com "RTMP流媒体服务器") ，支持RTMP直播、服务端录像、检索、回放等功能；
 
 ### 编译方法 ###
 
@@ -67,8 +67,25 @@ EasyRTMP是[TSINGSEE青犀开放平台](http://open.tsingsee.com "TSINGSEE青犀
 > EasyRTMP是一款非常稳定的RTMP推流直播组件，各平台版本需要经过授权才能商业使用，商业授权方案可以通过以上渠道进行更深入的技术与合作咨询；
 
 
-## 获取更多信息 ##
 
-TSINGSEE青犀开放平台：[http://open.tsingsee.com](http://open.tsingsee.com "TSINGSEE青犀开放平台")
+## 更多流媒体音视频资源
 
-Copyright &copy; TSINGSEE.com 2012~2019
+EasyDarwin开源流媒体服务器：<a href="http://www.easydarwin.org" target="_blank" title="EasyDarwin开源流媒体服务器">www.EasyDarwin.org</a>
+
+EasyDSS高性能互联网直播服务：<a href="http://www.easydss.com" target="_blank" title="EasyDSS高性能互联网直播服务">www.EasyDSS.com</a>
+
+EasyNVR安防视频可视化服务：<a href="http://www.easynvr.com" target="_blank" title="EasyNVR安防视频可视化服务">www.EasyNVR.com</a>
+
+EasyNVS视频综合管理平台：<a href="http://www.easynvs.com" target="_blank" title="EasyNVS视频综合管理平台">www.EasyNVS.com</a>
+
+EasyNTS云组网：<a href="http://www.easynts.com" target="_blank" title="EasyNTS云组网">www.EasyNTS.com</a>
+
+EasyGBS国标GB/T28181服务器：<a href="http://www.easygbs.com" target="_blank" title="EasyGBS国标GB/T28181视频服务器">www.EasyGBS.com</a>
+
+EasyRTS应急指挥平台：<a href="http://www.easyrts.com" target="_blank" title="EasyRTS应急指挥平台">www.EasyRTS.com</a>
+
+TSINGSEE青犀开放平台：<a href="http://open.tsingsee.com" target="_blank" title="TSINGSEE青犀开放平台">open.TSINGSEE.com</a>
+
+Copyright © <a href="http://www.tsingsee.com" target="_blank" title="青犀TSINGSEE">www.TSINGSEE.com</a> Team 2012-2019
+
+![青犀TSINGSEE](http://www.easydarwin.org/public/images/tsingsee_qrcode_160.jpg)
