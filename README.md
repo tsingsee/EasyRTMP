@@ -6,7 +6,9 @@ EasyRTMP是[TSINGSEE青犀开放平台](http://open.tsingsee.com "TSINGSEE青犀
 
 - **EasyRTMP_HIK**：EasyRTMP通过海康SDK取流，并进行转化，再推送到RTMP流媒体服务器；
 
-- **EasyRTMP_RTSP**：将RTSP/RTP数据获取到本地，再通过EasyRTMP推送到RTMP服务器；EasyRTMP_RTSP Demo除了EasyRTMP外还涉及到EasyRTSPClient库需要商业授权，EasyRTSPClient库是拉取RTSP流输出H264流和音频流的跨平台SDK。
+- **EasyRTSPLive**：拉流IPC摄像机或者NVR硬盘录像机RTSP流转成RTMP推送到阿里云CDN/腾讯云CDN/RTMP流媒体服务器，支持多路RTSP流同时拉取并以RTMP协议推送发布，EasyRTSPLive我们支持任何平台，包括但不限于Windows/Linux/Android/ARM，项目地址：[https://github.com/tsingsee/EasyRTSPLive](https://github.com/tsingsee/EasyRTSPLive "EasyRTSPLive")。
+
+- **EasyRTMPLive**：将RTSP、RTMP、HTTP、HLS等各种各样的网络流媒体先拉取到本地，进行转换，再以标准RTMP/flv协议的方式推流到RTMP流媒体服务器、CDN等，进行直播分发，项目地址：[https://github.com/tsingsee/EasyRTMPLive](https://github.com/tsingsee/EasyRTMPLive "EasyRTMPLive")。
 
 - **EasyRTMP-Android**：Android安卓RTMP直播推流，采集安卓手机前/后摄像头、麦克风音视频推送直播；项目地址：[https://github.com/tsingsee/EasyRTMP-Android](https://github.com/tsingsee/EasyRTMP-Android "EasyRTMP-Android")
 
