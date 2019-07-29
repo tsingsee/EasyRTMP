@@ -16,29 +16,31 @@ EasyRTMP是[TSINGSEE青犀开放平台](http://open.tsingsee.com "TSINGSEE青犀
 
 > 我们在公网部署了一台演示的RTMP高性能流媒体服务器系统：[http://demo.easydss.com](http://demo.easydss.com "RTMP流媒体服务器") ，支持RTMP直播、服务端录像、检索、回放等功能；
 
+
+## 项目依赖
+
+EasyRTMP项目依赖1个TSINGSEE青犀开放平台的Git工程：
+
+- Include：https://github.com/tsingsee/Include
+
+目录结构为：
+
+	/
+	/Include/
+	/EasyRTMP/
+
+
 ### 编译方法 ###
 
 	Windows平台采用Visual Studio 2010编译sln
 
 	Linux下执行Builtit文件编译,具体如下：
-		chmod +x Builtit
+	chmod +x Builtit
 		
-		"**************build stream from EasyRTMP_RTSP demo******************"
-		"1. build 32bit program ./Buildit rtsp i386 [target in i386]"	
-		"2. build 64bit program ./Buildit rtsp x64 [target in x64]"	
-		"3. clean up ./Buildit rtsp clean"
-		"-----------------------------------------------------------"
-		"**************build stream from EasyRTMP_FILE demo******************"
-		"4. build 32bit program ./Buildit file i386 [target in i386]"	
-		"5. build 64bit program ./Buildit file x64 [target in x64]"	
-		"6. clean up ./Buildit file clean"
-		"-----------------------------------------------------------"
-	
 
 ## 工作流程 ##
  
 ![EasyPusher Work Flow](http://www.easydarwin.org/github/images/easyrtmp/easyrtmp_workfolw.png)
- 
 
 
 ## 调用过程 ##
@@ -67,7 +69,6 @@ EasyRTMP是[TSINGSEE青犀开放平台](http://open.tsingsee.com "TSINGSEE青犀
 - QQ交流群：<a href="https://jq.qq.com/?_wv=1027&k=5dkmdix" title="EasyRTMP" target="_blank">**587254841**</a>
 
 > EasyRTMP是一款非常稳定的RTMP推流直播组件，各平台版本需要经过授权才能商业使用，商业授权方案可以通过以上渠道进行更深入的技术与合作咨询；
-
 
 
 ## 更多流媒体音视频资源
