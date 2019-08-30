@@ -197,13 +197,16 @@ int main(int argc, char * argv[])
 	bool bSuc = InitCfgInfo();
 	if (!bSuc)
 	{
-		printf("配置文件easyrtmp.ini 读取失败，请检查配置项是否正确!\n");
-
-		return 0;
+		printf("read config easyrtmp.ini fail，plz check file!\n");
+		goto end;
 	}
 
     fES = fopen(g_cfgInfo.srcFilePath, "rb");
-    if (NULL == fES)        return 0;
+    if (NULL == fES)
+	{
+		printf("read H.264 file:%s error!\n",g_cfgInfo.srcFilePath);
+		goto end;
+	}
 
     isActivated = EasyRTMP_Activate(KEY);
     switch(isActivated)
@@ -228,13 +231,19 @@ int main(int argc, char * argv[])
     	break;
     }
 
-    if(  isActivated<=0)
-    	return -1;
+    if(isActivated<=0)
+	{
+		printf("EasyRTMP License key error,plz confirm!\n");
+		goto end;
+	}
 
 	fPusherHandle = EasyRTMP_Create();
 
     if(fPusherHandle == NULL)
+	{
+		printf("create EasyRTMP push handle error,exit!\n");
         return -2;
+	}
 
     EasyRTMP_SetCallback(fPusherHandle, __EasyRTMP_Callback, NULL);
 
@@ -274,7 +283,6 @@ int main(int argc, char * argv[])
 
 				if(!b_init)
 				{
-
 					get_h264_sps_and_pps(pbuf, framesize, sps, &sps_len, pps, &pps_len );
 					if (sps_len>0 && pps_len>0)
 					{
@@ -323,7 +331,6 @@ int main(int argc, char * argv[])
 						nOffSet = framesize;
 					}
 
-
 					memset(&avFrame, 0x00, sizeof(EASY_AV_Frame));
 					avFrame.u32AVFrameLen   =   nOffSet;
 					avFrame.pBuffer = (unsigned char*)pSendBuf;
@@ -333,17 +340,16 @@ int main(int argc, char * argv[])
 						avFrame.u32VFrameType = EASY_SDK_VIDEO_FRAME_I;
 					}
 					avFrame.u32AVFrameFlag = EASY_SDK_VIDEO_FRAME_FLAG;
-// 					avFrame.u32TimestampSec = timestamp/1000;
-// 					avFrame.u32TimestampUsec = (timestamp%1000)*1000;
+					//avFrame.u32TimestampSec = timestamp/1000;
+					//avFrame.u32TimestampUsec = (timestamp%1000)*1000;
 					EasyRTMP_SendPacket(fPusherHandle, &avFrame);
 					timestamp += 1000/mediainfo.u32VideoFps;
 #ifndef _WIN32
 					usleep(30*1000);
 #else
 					Sleep(30);
-#endif			
+#endif
 				}
-
 
                 memmove(pbuf, pbuf+position-5, 5);
                 position = 5;
@@ -356,6 +362,7 @@ int main(int argc, char * argv[])
         }
     }
 
+end:
     _TRACE("Press Enter exit...\n");
     getchar();
 
