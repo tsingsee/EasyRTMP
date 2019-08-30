@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "ini.h"
 
 #ifdef _WIN32
 #include "getopt.h"
@@ -19,8 +20,20 @@
 #define KEY "79736C36655A4F576B597141725370636F39565245764E6C59584E35636E52746346396F6157736A567778576F5036532F69426C59584E35"
 #endif
 
-char* SRTMP = "rtmp://demo.easydss.com:10085/live/test"; //Default RTMP Push StreamName
-char* ProgName;
+#define CONF_FILE_PATH  "easyrtmp.ini"  
+typedef struct _cfg_info_t
+{
+	int channelId;
+	int option;
+	char channelName[64];
+	char srcFilePath[512];
+	char destRtmpAddr[512];
+}cfg_info;
+
+cfg_info g_cfgInfo;
+
+char* SRTMP=    "rtmp://demo.easydss.com:3388/live/swordtest"; //Default RTMP Push StreamName
+char* ProgName;								//Program Name
 
 int __EasyRTMP_Callback(int _frameType, char *pBuf, EASY_RTMP_STATE_T _state, void *_userPtr)
 {
@@ -32,17 +45,8 @@ int __EasyRTMP_Callback(int _frameType, char *pBuf, EASY_RTMP_STATE_T _state, vo
 
     return 0;
 }
-void PrintUsage()
-{
-    printf("Usage:\n");
-    printf("------------------------------------------------------\n");
-    printf("%s [-n <streamName>]\n", ProgName);
-    printf("Help Mode:   %s -h \n", ProgName );
-    printf("For example: %s -n rtmp://127.0.0.1/live/stream\n", ProgName); 
-    printf("------------------------------------------------------\n");
-}
 
-int find_nal_unit(unsigned char* buf, int size, int* nal_start, int* nal_end)
+int find_nal(unsigned char* buf, int size, int* nal_start, int* nal_end)
 {
 	int i;
 	// find start
@@ -85,9 +89,7 @@ int find_nal_unit(unsigned char* buf, int size, int* nal_start, int* nal_end)
 	*nal_end = i;
 	return (*nal_end - *nal_start);
 }
-
-
-int GetH264SPSandPPS(char *pbuf, int bufsize, char *_sps, int *_spslen, char *_pps, int *_ppslen)
+int get_h264_sps_and_pps(char *pbuf, int bufsize, char *_sps, int *_spslen, char *_pps, int *_ppslen)
 {
 	char* pin = pbuf;
 	int inlen = bufsize;
@@ -104,7 +106,7 @@ int GetH264SPSandPPS(char *pbuf, int bufsize, char *_sps, int *_spslen, char *_p
 		//		pout=FindNal(pin,inlen,outlen,bend);
 		int nal_start = 0;
 		int nal_end = 0;
-		outlen = find_nal_unit((unsigned char*)pin, inlen, &nal_start, &nal_end);
+		outlen = find_nal((unsigned char*)pin, inlen, &nal_start, &nal_end);
 		if (outlen <= 0)
 		{
 			break;
@@ -143,6 +145,23 @@ int GetH264SPSandPPS(char *pbuf, int bufsize, char *_sps, int *_spslen, char *_p
 	} while (bend != true);
 	return 1;
 }
+bool InitCfgInfo(void)
+{
+	int i = 0;
+
+	memset(&g_cfgInfo, 0, sizeof(cfg_info));
+	g_cfgInfo.channelId = i;
+	strcpy(g_cfgInfo.channelName, "config");
+	strcpy(g_cfgInfo.srcFilePath, GetIniKeyString(g_cfgInfo.channelName, "file", CONF_FILE_PATH));
+	strcpy(g_cfgInfo.destRtmpAddr, GetIniKeyString(g_cfgInfo.channelName, "rtmp", CONF_FILE_PATH));
+	g_cfgInfo.option = GetIniKeyInt(g_cfgInfo.channelName, "option", CONF_FILE_PATH);
+	if(strlen(g_cfgInfo.srcFilePath) > 0 && strlen(g_cfgInfo.destRtmpAddr) > 0)
+	{
+		return true;
+	}
+
+	return false;
+}
 
 int main(int argc, char * argv[])
 {
@@ -175,35 +194,16 @@ int main(int argc, char * argv[])
     int timestamp = 0;
     ProgName = argv[0];
 
-
-    PrintUsage();
-
-
-    while ((ch = getopt(argc,argv, "hd:p:n:")) != EOF) 
-    {
-    	switch(ch)
-    	{
-    	case 'h':
-    		PrintUsage();
-    		return 0;
-    		break;
-    	case 'n':
-    		SRTMP =optarg;
-    		break;
-    	case '?':
-    		return 0;
-    		break;
-    	default:
-    		break;
-    	}
-    }
-
-    fES = fopen("./EasyRTMP.264", "rb");
-    if (NULL == fES)        
+	bool bSuc = InitCfgInfo();
+	if (!bSuc)
 	{
-		printf("Need EasyRTMP.264 File!\n");
+		printf("配置文件easyrtmp.ini 读取失败，请检查配置项是否正确!\n");
+
 		return 0;
 	}
+
+    fES = fopen(g_cfgInfo.srcFilePath, "rb");
+    if (NULL == fES)        return 0;
 
     isActivated = EasyRTMP_Activate(KEY);
     switch(isActivated)
@@ -238,7 +238,7 @@ int main(int argc, char * argv[])
 
     EasyRTMP_SetCallback(fPusherHandle, __EasyRTMP_Callback, NULL);
 
-    EasyRTMP_Connect(fPusherHandle, SRTMP);
+    EasyRTMP_Connect(fPusherHandle, /*SRTMP*/g_cfgInfo.destRtmpAddr);
     
 
     while (1)
@@ -275,7 +275,7 @@ int main(int argc, char * argv[])
 				if(!b_init)
 				{
 
-					GetH264SPSandPPS(pbuf, framesize, sps, &sps_len, pps, &pps_len );
+					get_h264_sps_and_pps(pbuf, framesize, sps, &sps_len, pps, &pps_len );
 					if (sps_len>0 && pps_len>0)
 					{
 						memset(&mediainfo, 0x00, sizeof(EASY_MEDIA_INFO_T));

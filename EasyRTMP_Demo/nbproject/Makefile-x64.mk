@@ -35,6 +35,8 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/getopt.o \
+	${OBJECTDIR}/ini.o \
 	${OBJECTDIR}/main.o
 
 
@@ -61,6 +63,16 @@ LDLIBSOPTIONS=-L../Lib/${CND_CONF}
 ${CND_CONF}/EasyRTMP_Demo: ${OBJECTFILES}
 	${MKDIR} -p ${CND_CONF}
 	${LINK.cc} -o ${CND_CONF}/EasyRTMP_Demo ${OBJECTFILES} ${LDLIBSOPTIONS} -leasyrtmp -pthread
+
+${OBJECTDIR}/getopt.o: getopt.c
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -O2 -I../Include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/getopt.o getopt.c
+
+${OBJECTDIR}/ini.o: ini.cpp
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I../Include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ini.o ini.cpp
 
 ${OBJECTDIR}/main.o: main.cpp
 	${MKDIR} -p ${OBJECTDIR}

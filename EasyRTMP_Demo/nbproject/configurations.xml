@@ -18,6 +18,10 @@
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>EasyRTMP_Demo-Makefile.mk</itemPath>
     </logicalFolder>
+    <itemPath>getopt.c</itemPath>
+    <itemPath>getopt.h</itemPath>
+    <itemPath>ini.cpp</itemPath>
+    <itemPath>ini.h</itemPath>
     <itemPath>main.cpp</itemPath>
   </logicalFolder>
   <projectmakefile>EasyRTMP_Demo-Makefile.mk</projectmakefile>
@@ -49,6 +53,14 @@
           <commandLine>-leasyrtmp -pthread</commandLine>
         </linkerTool>
       </compileType>
+      <item path="getopt.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="getopt.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ini.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="ini.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
     </conf>
@@ -81,6 +93,14 @@
           <commandLine>-leasyrtmp -pthread</commandLine>
         </linkerTool>
       </compileType>
+      <item path="getopt.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="getopt.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ini.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="ini.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
     </conf>

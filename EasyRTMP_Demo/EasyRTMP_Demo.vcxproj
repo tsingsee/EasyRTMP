@@ -20,10 +20,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="getopt.h" />
+    <ClInclude Include="ini.h" />
     <ClInclude Include="trace.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="getopt.c" />
+    <ClCompile Include="ini.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="trace.cpp" />
   </ItemGroup>
@@ -79,12 +81,12 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>./;./Include/;../Include/;../../Include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Include/;../../Include/</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../Lib/x86</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Lib/x86;../../Lib/x86</AdditionalLibraryDirectories>
       <AdditionalDependencies>ws2_32.lib;wsock32.lib;winmm.lib;libEasyRTMP.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -92,12 +94,12 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>./;./Include/;../Include/;../../Include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Include/;../../Include/</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../Lib/x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Lib/x64;../../Lib/x64</AdditionalLibraryDirectories>
       <AdditionalDependencies>ws2_32.lib;wsock32.lib;winmm.lib;libEasyRTMP.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -107,14 +109,14 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>./;./Include/;../Include/;../../Include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Include/;../../Include/</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../Lib/x86</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Lib/x86;../../Lib/x86</AdditionalLibraryDirectories>
       <AdditionalDependencies>ws2_32.lib;wsock32.lib;winmm.lib;libEasyRTMP.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -124,14 +126,14 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>./;./Include/;../Include/;../../Include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Include/;../../Include/</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../Lib/x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Lib/x64;../../Lib/x64</AdditionalLibraryDirectories>
       <AdditionalDependencies>ws2_32.lib;wsock32.lib;winmm.lib;libeasyrtmp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
