@@ -19,8 +19,8 @@
 #define KEY "79736C36655A4F576B597141725370636F39565245764E6C59584E35636E52746346396F6157736A567778576F5036532F69426C59584E35"
 #endif
 
-char* SRTMP=    "rtmp://demo.easydss.com:3388/live/swordtest"; //Default RTMP Push StreamName
-char* ProgName;								//Program Name
+char* SRTMP = "rtmp://demo.easydss.com:10085/live/test"; //Default RTMP Push StreamName
+char* ProgName;
 
 int __EasyRTMP_Callback(int _frameType, char *pBuf, EASY_RTMP_STATE_T _state, void *_userPtr)
 {
@@ -198,8 +198,12 @@ int main(int argc, char * argv[])
     	}
     }
 
-    fES = fopen("./EasyDarwin.264", "rb");
-    if (NULL == fES)        return 0;
+    fES = fopen("./EasyRTMP.264", "rb");
+    if (NULL == fES)        
+	{
+		printf("Need EasyRTMP.264 File!\n");
+		return 0;
+	}
 
     isActivated = EasyRTMP_Activate(KEY);
     switch(isActivated)
