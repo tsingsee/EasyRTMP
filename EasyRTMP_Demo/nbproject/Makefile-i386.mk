@@ -54,7 +54,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-L../Lib/${CND_CONF}
+LDLIBSOPTIONS=-L../Lib/x86
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
@@ -67,17 +67,17 @@ ${CND_CONF}/EasyRTMP_Demo: ${OBJECTFILES}
 ${OBJECTDIR}/getopt.o: getopt.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.c) -O2 -I../Include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/getopt.o getopt.c
+	$(COMPILE.c) -O2 -I../Include -I../../Include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/getopt.o getopt.c
 
 ${OBJECTDIR}/ini.o: ini.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -I../Include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ini.o ini.cpp
+	$(COMPILE.cc) -O2 -I../Include -I../../Include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ini.o ini.cpp
 
 ${OBJECTDIR}/main.o: main.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -I../Include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
+	$(COMPILE.cc) -O2 -I../Include -I../../Include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
 
 # Subprojects
 .build-subprojects:
