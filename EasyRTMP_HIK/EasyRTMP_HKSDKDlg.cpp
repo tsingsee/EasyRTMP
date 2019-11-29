@@ -313,6 +313,7 @@ BEGIN_MESSAGE_MAP(CDecCallBack_DemoDlg, CDialog)
 	ON_BN_CLICKED(IDC_CHECK_DECORD, &CDecCallBack_DemoDlg::OnBnClickedCheckDecord)
 	ON_BN_CLICKED(IDC_CHECK_FILMMODE, &CDecCallBack_DemoDlg::OnBnClickedCheckFilmmode)
 	ON_BN_CLICKED(IDOK, &CDecCallBack_DemoDlg::OnBnClickedOk)
+	ON_BN_CLICKED(IDCANCEL, &CDecCallBack_DemoDlg::OnBnClickedCancel)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -358,9 +359,9 @@ BOOL CDecCallBack_DemoDlg::OnInitDialog()
 
 	iPChannel=1;
 
-	m_ctrlDeviceIP.SetAddress(192, 168, 1, 73);
+	m_ctrlDeviceIP.SetAddress(192, 168, 99, 23);
 	m_csUserName="admin";
-	m_csPassword="Admin1234";
+	m_csPassword="admin12345";
 	m_nLoginPort=8000;
 
 	m_nChangeId = 1;
@@ -1066,6 +1067,7 @@ void CDecCallBack_DemoDlg::OnBnClickedOk()
 
 
 			//预览取流 
+			///NET_DVR_RealPlay_V40 启动预览函数
 			m_llRealHandle[nI] = NET_DVR_RealPlay_V40(m_lUserID[nI],&struPlayInfo,fRealDataCallBack, this);
 
 			if (m_llRealHandle[nI]<0)
@@ -1128,4 +1130,11 @@ void CDecCallBack_DemoDlg::OnBnClickedOk()
 	}
 
 	UpdateData(FALSE);
+}
+
+
+void CDecCallBack_DemoDlg::OnBnClickedCancel()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	CDialog::OnCancel();
 }

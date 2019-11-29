@@ -192,6 +192,7 @@ public:
 	afx_msg void OnBnClickedCheckFilmmode();
 	BOOL m_bFilmMode;
 	afx_msg void OnBnClickedOk();
+	afx_msg void OnBnClickedCancel();
 };
 
 //{{AFX_INSERT_LOCATION}}
