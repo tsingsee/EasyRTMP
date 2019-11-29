@@ -31,7 +31,6 @@ _ReSharper*/
 [Pp]rivate*/
 ipch/
 *.opensdf
-*.264
 *.VC.db
 
 Android/EasyRTMP/update/
@@ -39,3 +38,4 @@ Android/EasyRTMP/update/
 /EasyRTMP_RTSP/Debug/*
 /EasyRTMP_HIK/Debug/*
 *.exe
+/EasyRTMP_Demo/Debug/*

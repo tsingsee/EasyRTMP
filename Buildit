@@ -7,6 +7,12 @@ usage()
 	echo "2. build 64bit program ./Buildit rtsp x64 [target in x64]"	
 	echo "3. clean up ./Buildit rtsp clean"
 	echo "-----------------------------------------------------------"
+	echo "**************build stream from EasyRTMP_Demo demo******************"
+	echo "4. build 32bit program ./Buildit demo i386 [target in i386]"	
+	echo "5. build 64bit program ./Buildit demo x64 [target in x64]"	
+	echo "6. clean up ./Buildit demo clean"
+	echo "-----------------------------------------------------------"
+	echo "-----------------------------------------------------------"
 	echo "**************build stream from EasyRTMP_FILE demo******************"
 	echo "4. build 32bit program ./Buildit file i386 [target in i386]"	
 	echo "5. build 64bit program ./Buildit file x64 [target in x64]"	
@@ -37,6 +43,9 @@ if [ "$1" = "rtsp" ] ; then
 	build $2;
 elif [ "$1" = "file" ] ; then
 	cd EasyRTMP_File
+	build $2;
+elif [ "$1" = "demo" ] ; then
+	cd EasyRTMP_Demo
 	build $2;
 elif [ "$1" = "sdk" ] ; then
 	cd EasyRTMP_SDK
