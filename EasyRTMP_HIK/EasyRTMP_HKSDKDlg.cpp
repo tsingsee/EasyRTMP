@@ -359,9 +359,9 @@ BOOL CDecCallBack_DemoDlg::OnInitDialog()
 
 	iPChannel=1;
 
-	m_ctrlDeviceIP.SetAddress(192, 168, 99, 23);
+	m_ctrlDeviceIP.SetAddress(192, 168, 99, 193);
 	m_csUserName="admin";
-	m_csPassword="admin12345";
+	m_csPassword="a1234567";
 	m_nLoginPort=8000;
 
 	m_nChangeId = 1;
@@ -939,8 +939,8 @@ int CDecCallBack_DemoDlg::WriteH264DataToChace(int nDevId, BYTE* pBuffer, int nB
 		avFrame.u32AVFrameLen = nBufSize;
 		avFrame.u32VFrameType = (bKeyFrame)?EASY_SDK_VIDEO_FRAME_I:EASY_SDK_VIDEO_FRAME_P;
 		avFrame.u32AVFrameFlag = EASY_SDK_VIDEO_FRAME_FLAG;
-		avFrame.u32TimestampSec = lTimeStamp/1000000;
-		avFrame.u32TimestampUsec = (lTimeStamp%1000000);
+		//avFrame.u32TimestampSec = lTimeStamp/1000000;
+		//avFrame.u32TimestampUsec = (lTimeStamp%1000000);
 
 		//EnterCriticalSection(&m_cs);
 		EasyRTMP_SendPacket(m_RtmpHandle, &avFrame);	
